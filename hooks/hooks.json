@@ -1,0 +1,15 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "mcp__leadmagic__submit_bulk_job|mcp__leadmagic__submit_detected_bulk_job|mcp__leadmagic__create_bulk_upload_session|mcp__leadmagic__process_attached_csv",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${CLAUDE_PLUGIN_ROOT}/scripts/credit-guard-bulk.sh\""
+          }
+        ]
+      }
+    ]
+  }
+}
