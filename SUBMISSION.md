@@ -34,12 +34,13 @@ productivity, sales, data, gtm, enrichment, mcp
 claude plugin validate --strict .
 ```
 
-- [ ] Public GitHub repo created and pushed
-- [ ] `claude plugin validate --strict` passes
+- [x] Public GitHub repo created and pushed
+- [x] `claude plugin validate --strict` passes
 - [ ] OAuth smoke: `check_credit_balance` after install
-- [ ] Skills invoke without LinkedIn/mobile marketing copy
-- [ ] Bulk hook prompts on `submit_*`
-- [ ] Directory Terms / Policy acknowledged in form
+- [x] Skills invoke without LinkedIn/mobile marketing copy
+- [x] Bulk hook prompts on `submit_*`
+- [x] Directory Terms / Policy acknowledged in form
+- [x] Submitted to Claude plugin directory (2026-07-16) — in review
 
 ## Notes for reviewers
 
