@@ -14,7 +14,7 @@ Use when the user needs a validated work email or wants LeadMagic to find the li
    - Full name + company/domain → `find_work_email` or composite `enrich_contact`
    - Needs full dossier → `enrich_contact`
    - Job-change signal → `detect_job_change`
-2. Prefer the cheapest path that answers the question. Do not re-find an email that already validates.
+2. Prefer the cheapest path that answers the question. Do not re-find an email that already validates — and never validate an email a LeadMagic finder just returned: finder emails are always pre-validated.
 3. Prefer composites over chaining many primitives.
 4. For lists/CSVs → bulk enrichment skill (do not loop per row).
 5. Only report fields returned by tools — never invent contacts.
