@@ -30,8 +30,9 @@ On other plans, browse search costs ~1 credit per returned row — use `preview_
    (jobs), or a small probe search (people/companies).
 2. Run the broad search: `search_people`, `search_companies`, `search_jobs` / `find_jobs`.
 3. Page with cursors (below) until the segment is complete.
-4. Only then enrich: decision-maker emails, validation, mobiles — per the
-   `decision-makers` / `contact-lookup` skills.
+4. Only then enrich: decision-maker emails and mobiles — per the `decision-makers` /
+   `contact-lookup` skills. Finder emails come back pre-validated; validate only
+   emails the user brought from elsewhere.
 
 ## Cursor pagination (all three surfaces)
 
