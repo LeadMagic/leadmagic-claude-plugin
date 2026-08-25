@@ -2,7 +2,7 @@
 
 ## Scope
 
-This repository packages a Claude Code plugin that connects to LeadMagic’s hosted MCP server (`https://mcp.leadmagic.io`). Most MCP tools are read-only enrichment/discovery helpers. A small set of bulk tools enqueue asynchronous enrichment jobs (`readOnlyHint: false`); they do not delete or overwrite customer data.
+This repository packages a Claude Code plugin that connects to LeadMagic’s hosted MCP server (`https://mcp.leadmagic.io/mcp`). Most MCP tools are read-only enrichment/discovery helpers. A small set of bulk tools enqueue asynchronous enrichment jobs (`readOnlyHint: false`); they do not delete or overwrite customer data.
 
 ## Reporting vulnerabilities
 

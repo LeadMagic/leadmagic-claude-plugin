@@ -22,7 +22,7 @@ B2B enrichment for Claude Code — research accounts, validate work emails, hiri
 
 ## Description
 
-LeadMagic connects Claude Code to hosted MCP (`https://mcp.leadmagic.io`) for account research, work email discovery/validation, decision-maker search, hiring intent, ads research, analytics, and queued bulk enrichment. Includes skills, GTM/bulk agents, and a PreToolUse confirmation gate before credit-consuming bulk tools. OAuth only — no API keys in the client.
+LeadMagic connects Claude Code to hosted MCP (`https://mcp.leadmagic.io/mcp`) for account research, work email discovery/validation, decision-maker search, hiring intent, ads research, analytics, and queued bulk enrichment. Includes skills, GTM/bulk agents, and a PreToolUse confirmation gate before credit-consuming bulk tools. OAuth only — no API keys in the client.
 
 ## Categories / keywords
 
@@ -44,7 +44,7 @@ claude plugin validate --strict .
 
 ## Notes for reviewers
 
-- MCP URL: `https://mcp.leadmagic.io` (also `/mcp`)
+- MCP URL: `https://mcp.leadmagic.io/mcp` (bare origin also accepted)
 - Same production OAuth as the Connectors Directory listing
 - Free helpers do not consume LeadMagic credits
 - Bulk tools enqueue jobs; poll status ≥45s between calls

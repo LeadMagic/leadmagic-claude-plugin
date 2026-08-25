@@ -1,6 +1,10 @@
 # LeadMagic for Claude Code
 
-Official LeadMagic plugin for [Claude Code](https://code.claude.com): skills, agents, credit-safe hooks, and the hosted MCP connector at `https://mcp.leadmagic.io`.
+Official LeadMagic plugin for [Claude Code](https://code.claude.com): skills, agents, credit-safe hooks, and the hosted MCP connector at `https://mcp.leadmagic.io/mcp`.
+
+> **Unlimited search on Professional & Ultimate plans:** People, Company, and Jobs Search are credit-free with no volume cap — rate-limited only (5 req/s Professional, 10 req/s Ultimate). The `market-search` skill teaches Claude to use that properly, including cursor pagination.
+>
+> Prefer raw REST + API-level skills? See [LeadMagic/leadmagic-skills](https://github.com/LeadMagic/leadmagic-skills) (`npx skills add LeadMagic/leadmagic-skills`).
 
 ## Install
 
@@ -21,7 +25,7 @@ Or submit/install via the [Claude plugin directory](https://claude.com/docs/plug
 
 ## Connect
 
-1. After install, Claude Code loads the `leadmagic` MCP server (HTTP → `https://mcp.leadmagic.io`).
+1. After install, Claude Code loads the `leadmagic` MCP server (HTTP → `https://mcp.leadmagic.io/mcp`).
 2. Complete OAuth (Clerk + PKCE) in the browser.
 3. Try: *Check my LeadMagic credit balance.*
 
@@ -36,6 +40,7 @@ No API keys in the client — tokens are resolved server-side.
 | `contact-lookup` | Find or validate work email |
 | `decision-makers` | Buyers / roles at a company |
 | `hiring-intent` | Jobs + hiring signals |
+| `market-search` | Broad people/company/jobs search — unlimited-plan aware, cursor pagination |
 | `ads-research` | Google / Meta / B2B creatives |
 | `bulk-enrichment` | CSV queue + poll |
 | `credit-guard` | Spend discipline |
@@ -58,7 +63,7 @@ claude plugin validate --strict .
 
 ## Related
 
-- Hosted MCP / Connectors Directory: `https://mcp.leadmagic.io`
+- Hosted MCP / Connectors Directory: `https://mcp.leadmagic.io/mcp`
 - Docs: https://leadmagic.io/docs/mcp/introduction
 - Privacy: https://leadmagic.io/privacy
 - Support: https://leadmagic.io/docs/support
