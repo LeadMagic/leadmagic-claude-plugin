@@ -64,9 +64,9 @@ claude plugin validate --strict .
 ## Related
 
 - Hosted MCP / Connectors Directory: `https://mcp.leadmagic.io/mcp`
-- Docs: https://leadmagic.io/docs/mcp/introduction
-- Privacy: https://leadmagic.io/privacy
-- Support: https://leadmagic.io/docs/support
+- Docs: [leadmagic.io/docs/mcp/introduction](https://leadmagic.io/docs/mcp/introduction?utm_source=github&utm_medium=readme&utm_campaign=leadmagic-claude-plugin)
+- Privacy: [leadmagic.io/privacy](https://leadmagic.io/privacy?utm_source=github&utm_medium=readme&utm_campaign=leadmagic-claude-plugin)
+- Support: [leadmagic.io/docs/support](https://leadmagic.io/docs/support?utm_source=github&utm_medium=readme&utm_campaign=leadmagic-claude-plugin)
 
 ## License
 
