@@ -1,0 +1,115 @@
+name: Validate plugin
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+# Least-privilege token: the job only reads the checkout.
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  # GitHub never re-creates a cancelled run, so only PR runs are cancelled.
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  validate:
+    name: Validate plugin
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Validate JSON manifests
+        run: |
+          set -euo pipefail
+          status=0
+          for f in .claude-plugin/plugin.json .claude-plugin/marketplace.json .mcp.json hooks/hooks.json; do
+            if jq -e . "$f" >/dev/null; then
+              echo "ok    $f"
+            else
+              echo "INVALID $f"
+              status=1
+            fi
+          done
+          exit "$status"
+
+      - name: Check plugin.json component paths exist
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, os, sys
+          manifest = json.load(open(".claude-plugin/plugin.json"))
+          missing = []
+          def check(value):
+              if isinstance(value, str):
+                  if not os.path.exists(value):
+                      missing.append(value)
+              elif isinstance(value, list):
+                  for item in value:
+                      check(item)
+          for key in ("skills", "agents", "hooks", "mcpServers", "commands"):
+              if key in manifest:
+                  check(manifest[key])
+          for skill_md in sorted(os.path.join(r, "SKILL.md") for r, _, files in os.walk("skills") if "SKILL.md" in files):
+              print(f"skill  {skill_md}")
+          if missing:
+              print("plugin.json references paths that do not exist:", *missing, sep="\n  ")
+              sys.exit(1)
+          print("ok     all plugin.json component paths exist")
+          PY
+
+      - name: Shell syntax check (bash -n)
+        run: |
+          set -euo pipefail
+          find . -name '*.sh' -not -path './.git/*' -print0 | xargs -0 -n1 -t bash -n
+
+      - name: ShellCheck
+        run: |
+          set -euo pipefail
+          shellcheck --version
+          find . -name '*.sh' -not -path './.git/*' -print0 | xargs -0 shellcheck
+
+      - name: Check relative Markdown links
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import os, re, sys
+          link_re = re.compile(r"(?<!!)\[[^\]]*\]\(([^)\s]+)(?:\s+\"[^\"]*\")?\)")
+          skip = ("http://", "https://", "mailto:", "#", "tel:")
+          broken = []
+          checked = 0
+          for root, dirs, files in os.walk("."):
+              dirs[:] = [d for d in dirs if d not in (".git", "node_modules")]
+              for name in files:
+                  if not name.endswith(".md"):
+                      continue
+                  md = os.path.join(root, name)
+                  text = open(md, encoding="utf-8").read()
+                  for target in link_re.findall(text):
+                      if target.startswith(skip) or "${" in target or target.startswith("<"):
+                          continue
+                      rel = target.split("#", 1)[0]
+                      if not rel:
+                          continue
+                      resolved = os.path.normpath(os.path.join(root, rel))
+                      checked += 1
+                      if not os.path.exists(resolved):
+                          broken.append(f"{md}: {target}")
+          print(f"checked {checked} relative links")
+          if broken:
+              print("broken relative links:", *broken, sep="\n  ")
+              sys.exit(1)
+          PY
