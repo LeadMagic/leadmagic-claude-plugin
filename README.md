@@ -1,5 +1,7 @@
 # LeadMagic Claude Code Plugin: B2B Research and MCP Enrichment
 
+<img src="https://raw.githubusercontent.com/LeadMagic/leadmagic-claude-plugin/main/assets/logo.svg" width="64" height="64" alt="LeadMagic logo">
+
 Official LeadMagic plugin for [Claude Code](https://code.claude.com): skills, agents, credit-safe hooks, and the hosted MCP connector at `https://mcp.leadmagic.io/mcp`.
 
 [LeadMagic B2B enrichment](https://leadmagic.io?utm_source=github&utm_medium=readme&utm_campaign=leadmagic-claude-plugin&utm_content=readme-intro) · [MCP setup guide](https://leadmagic.io/docs/mcp/setup?utm_source=github&utm_medium=readme&utm_campaign=leadmagic-claude-plugin&utm_content=readme-intro) · [Pricing and credits](https://leadmagic.io/pricing?utm_source=github&utm_medium=readme&utm_campaign=leadmagic-claude-plugin&utm_content=readme-intro)
