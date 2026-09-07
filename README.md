@@ -6,6 +6,13 @@ Official LeadMagic plugin for [Claude Code](https://code.claude.com): skills, ag
 >
 > Prefer raw REST + API-level skills? See [LeadMagic/leadmagic-skills](https://github.com/LeadMagic/leadmagic-skills) (`npx skills add LeadMagic/leadmagic-skills`).
 
+## Current integration contract
+
+Reviewed against [LeadMagic's public documentation](https://leadmagic.io/docs) on 2026-09-06. REST uses `https://api.leadmagic.io` and `X-API-Key`; hosted MCP uses `https://mcp.leadmagic.io/mcp` with OAuth; lm-tui uses `lm login`. Keep credentials and customer data out of committed examples.
+
+Email Finder returns validated work emails. Use Email Validation for externally sourced addresses. Check the [current pricing and credit rules](https://leadmagic.io/docs/v1/credits) before paid work; costs are endpoint- and plan-dependent. API-only integrations must not send app-only `preview` options.
+
+
 ## Install
 
 ### From a local checkout (dev)
