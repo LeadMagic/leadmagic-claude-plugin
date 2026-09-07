@@ -1,17 +1,9 @@
-# Security policy
+# Security and responsible disclosure
 
-## Scope
+Report suspected vulnerabilities privately to [security@leadmagic.io](mailto:security@leadmagic.io). Share a minimal, sanitized reproduction and affected version. Do not post credentials, access tokens, personal contact records, customer data, private logs, or exploit payloads in public issues.
 
-This repository packages a Claude Code plugin that connects to LeadMagic’s hosted MCP server (`https://mcp.leadmagic.io/mcp`). Most MCP tools are read-only enrichment/discovery helpers. A small set of bulk tools enqueue asynchronous enrichment jobs (`readOnlyHint: false`); they do not delete or overwrite customer data.
+Use the official links in the repository README and [LeadMagic documentation](https://leadmagic.io/docs) to verify installation sources. Third-party projects and references do not imply affiliation or endorsement.
 
-## Reporting vulnerabilities
+Keep credentials in a secret manager or the client's supported authentication flow. Public examples must use synthetic data. If a real credential has been published, revoke or rotate it with its issuing service; deleting a file does not invalidate a credential or erase Git history.
 
-1. Email `security@leadmagic.io` with description, reproduction steps, and impact.
-2. Do **not** open a public GitHub issue for security vulnerabilities.
-
-## Hardening
-
-- Never commit tokens, assertions, or credentials.
-- Plugin ships **no API keys** — OAuth is completed in the client; LeadMagic resolves Bearer tokens server-side.
-- Bulk write tools are gated by a PreToolUse confirmation hook.
-- Keep dependencies minimal; this plugin is primarily Markdown + shell hooks.
+Security controls, service commitments, and contractual terms are defined by the applicable published policies and agreements. This repository does not claim certification, universal legal compliance, or guaranteed security.

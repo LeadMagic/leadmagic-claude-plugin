@@ -78,3 +78,7 @@ claude plugin validate --strict .
 ## License
 
 MIT — see [LICENSE](./LICENSE).
+
+## Public examples and publication
+
+Examples are fictional unless an explicit public source is cited. See [PUBLICATION.md](PUBLICATION.md) for data, claims, attribution, and disclosure requirements.
