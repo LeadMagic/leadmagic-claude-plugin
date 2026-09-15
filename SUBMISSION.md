@@ -9,7 +9,7 @@ Use with https://claude.ai/admin-settings/directory/submissions/plugins/new
 |-------|--------|
 | Plugin name | LeadMagic |
 | Display name | LeadMagic |
-| Version | 0.1.0 |
+| Version | 0.2.0 |
 | Public GitHub | `https://github.com/LeadMagic/leadmagic-claude-plugin` (publish this package) |
 | Homepage | https://leadmagic.io/docs/mcp/introduction |
 | Support | https://leadmagic.io/docs/support |
@@ -22,7 +22,7 @@ B2B enrichment for Claude Code — research accounts, validate work emails, hiri
 
 ## Description
 
-LeadMagic connects Claude Code to hosted MCP (`https://mcp.leadmagic.io/mcp`) for account research, work email discovery/validation, decision-maker search, hiring intent, ads research, analytics, and queued bulk enrichment. Includes skills, GTM/bulk agents, and a PreToolUse confirmation gate before credit-consuming bulk tools. OAuth only — no API keys in the client.
+LeadMagic connects Claude Code to hosted MCP (`https://mcp.leadmagic.io/mcp`) for account research, work email discovery/validation, decision-maker search, hiring intent, ads research, analytics, and queued bulk enrichment. Includes skills, GTM/bulk agents, and a PreToolUse approval policy: read and single-record tools run without a prompt; bulk jobs, paid runs, CRM/sequencer imports, outbound pushes and deletes still ask. OAuth only — no API keys in the client.
 
 ## Categories / keywords
 
@@ -38,7 +38,7 @@ claude plugin validate --strict .
 - [x] `claude plugin validate --strict` passes
 - [ ] OAuth smoke: `check_credit_balance` after install
 - [x] Skills invoke without LinkedIn/mobile marketing copy
-- [x] Bulk hook prompts on `submit_*`
+- [ ] Approval hook: `check_credit_balance` runs without a prompt; `submit_bulk_job` prompts with the bulk reason
 - [x] Directory Terms / Policy acknowledged in form
 - [x] Submitted to Claude plugin directory (2026-07-16) — in review
 

@@ -2,7 +2,7 @@
 
 <img src="https://raw.githubusercontent.com/LeadMagic/leadmagic-claude-plugin/main/assets/logo.svg" width="64" height="64" alt="LeadMagic logo">
 
-Official LeadMagic plugin for [Claude Code](https://code.claude.com): skills, agents, credit-safe hooks, and the hosted MCP connector at `https://mcp.leadmagic.io/mcp`.
+Official LeadMagic plugin for [Claude Code](https://code.claude.com): skills, agents, an approval-policy hook, and the hosted MCP connector at `https://mcp.leadmagic.io/mcp`.
 
 [LeadMagic B2B enrichment](https://leadmagic.io?utm_source=github&utm_medium=readme&utm_campaign=leadmagic-claude-plugin&utm_content=readme-intro) · [MCP setup guide](https://leadmagic.io/docs/mcp/setup?utm_source=github&utm_medium=readme&utm_campaign=leadmagic-claude-plugin&utm_content=readme-intro) · [Pricing and credits](https://leadmagic.io/pricing?utm_source=github&utm_medium=readme&utm_campaign=leadmagic-claude-plugin&utm_content=readme-intro)
 
@@ -61,9 +61,26 @@ The bundled connection uses OAuth; no REST API key is required.
 - `leadmagic-gtm` — general research & enrichment
 - `leadmagic-bulk` — file / multi-row jobs
 
-## Credit safety
+## Credit safety and approval prompts
 
-A PreToolUse hook asks before bulk write tools (`submit_*`, CSV upload session helpers). Free helpers: `check_credit_balance`, `preview_cost`, `get_account_analytics`, `get_job_search_catalogs`, `resolve_job_search_filters`.
+Claude Code asks before every MCP tool call unless something says otherwise. Left alone, a long LeadMagic task stalls on a prompt every step. The plugin ships a `PreToolUse` hook (`scripts/approval-policy.sh`) that answers for you:
+
+- **Runs without asking:** every read and single-record tool — lookups, searches, validation, composites like `account_intel`, and sheet reads and cell edits. Some of these spend a credit or two; the `credit-guard` skill has the model call `preview_cost` before anything larger.
+- **Still asks, with a reason naming the tool and what to check:**
+
+| Group | Tools |
+| --- | --- |
+| Bulk jobs | `submit_bulk_job`, `submit_detected_bulk_job`, `create_bulk_upload_session`, `process_attached_csv`, `restart_bulk_job` |
+| Paid runs | `run_sheet_column`, `run_cloud_workflow`, `publish_cloud_workflow`, `resume_cloud_run`, `resume_bulk_job` |
+| Imports into a sheet | `import_cloud_crm`, `import_cloud_sequencer` |
+| Outbound pushes | `push_cloud_rows` |
+| Deletes | `delete_sheet_rows`, `remove_prospect_list_members` |
+
+`cancel_*` and `pause_*` run without asking: they stop spend rather than start it. Your own `permissions.deny` and `permissions.ask` rules still win over the hook.
+
+To restore stock Claude Code prompting for every tool, set `LEADMAGIC_ASK_ALL=1` in the environment Claude Code runs in.
+
+Connected LeadMagic without the plugin (`claude mcp add …`)? Hooks only ship with the plugin. Paste the equivalent policy into `~/.claude/settings.json` instead — the snippet is under Settings → API → AI tooling → Claude Code in the LeadMagic app.
 
 ## Validate
 

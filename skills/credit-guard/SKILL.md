@@ -13,7 +13,7 @@ Use whenever enrichment may spend credits, before bulk jobs, or when the user as
 2. Prefer composites (`account_intel`, `enrich_contact`, `find_decision_makers`) over long primitive chains.
 3. Do not repeat the same lookup for identical inputs in one session.
 4. Empty/not-found results are usually free — say so when reporting.
-5. Bulk/write tools require explicit user confirmation.
+5. Bulk jobs, paid runs, imports, outbound pushes and deletes prompt the user through the plugin hook. Single-record paid tools do not — before any call you expect to exceed ~25 credits (`search_people` with limit > 25, `find_company_employees`, `account_intel` with jobs), call `preview_cost` and ask.
 
 ## Output
 - Credits remaining / estimated cost when known
