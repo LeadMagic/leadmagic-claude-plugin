@@ -2,7 +2,7 @@
 
 <img src="https://raw.githubusercontent.com/LeadMagic/leadmagic-claude-plugin/main/assets/logo.svg" width="64" height="64" alt="LeadMagic logo">
 
-Official LeadMagic plugin for [Claude Code](https://code.claude.com): skills, agents, an approval-policy hook, and the hosted MCP connector at `https://mcp.leadmagic.io/mcp`.
+Official LeadMagic plugin for [Claude Code](https://code.claude.com): skills, agents, an approval-policy hook, and the hosted MCP connector at `https://mcp.leadmagic.io`.
 
 [LeadMagic B2B enrichment](https://leadmagic.io?utm_source=github&utm_medium=readme&utm_campaign=leadmagic-claude-plugin&utm_content=readme-intro) · [MCP setup guide](https://leadmagic.io/docs/mcp/setup?utm_source=github&utm_medium=readme&utm_campaign=leadmagic-claude-plugin&utm_content=readme-intro) · [Pricing and credits](https://leadmagic.io/pricing?utm_source=github&utm_medium=readme&utm_campaign=leadmagic-claude-plugin&utm_content=readme-intro)
 
@@ -36,7 +36,7 @@ Or submit/install via the [Claude plugin directory](https://claude.com/docs/plug
 
 ## Connect
 
-1. After install, Claude Code loads the `leadmagic` MCP server (HTTP → `https://mcp.leadmagic.io/mcp`).
+1. After install, Claude Code loads the `leadmagic` MCP server (HTTP → `https://mcp.leadmagic.io`).
 2. Complete OAuth sign-in in the browser.
 3. Try: *Check my LeadMagic credit balance.*
 
@@ -93,7 +93,7 @@ claude plugin validate --strict .
 
 ## Related
 
-- Hosted MCP / Connectors Directory: `https://mcp.leadmagic.io/mcp`
+- Hosted MCP / Connectors Directory: `https://mcp.leadmagic.io` (Claude clients; `/mcp` is for Cursor, VS Code and ChatGPT)
 - Docs: [leadmagic.io/docs/mcp/introduction](https://leadmagic.io/docs/mcp/introduction?utm_source=github&utm_medium=readme&utm_campaign=leadmagic-claude-plugin&utm_content=readme-related)
 - Privacy: [leadmagic.io/privacy](https://leadmagic.io/privacy?utm_source=github&utm_medium=readme&utm_campaign=leadmagic-claude-plugin&utm_content=readme-related)
 - Support: [leadmagic.io/docs/support](https://leadmagic.io/docs/support?utm_source=github&utm_medium=readme&utm_campaign=leadmagic-claude-plugin&utm_content=readme-related)
