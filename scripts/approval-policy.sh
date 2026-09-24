@@ -74,6 +74,20 @@ if [[ -z "$group" ]]; then
   exit 0
 fi
 
+# The hosted server runs these tools only when the call carries the
+# confirmation_token its first, preview-only call returned. So the preview runs
+# unprompted and the person is asked once, on the call that would act. The two
+# widget openers carry no token and always ask.
+case "$name" in
+  create_bulk_upload_session|process_attached_csv) ;;
+  *)
+    token_pattern='"confirmation_token"[[:space:]]*:[[:space:]]*"'
+    if [[ ! "$input" =~ $token_pattern ]]; then
+      emit allow "LeadMagic ${name}: preview only. Nothing runs until you approve the follow-up call that carries its confirmation_token."
+      exit 0
+    fi ;;
+esac
+
 case "$group" in
   bulk)
     reason="LeadMagic ${name} queues a paid bulk job that bills every row. Check preview_cost and check_credit_balance, confirm the row count, then approve." ;;

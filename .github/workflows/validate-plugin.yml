@@ -90,11 +90,15 @@ jobs:
           check() { local want="$1"; local got; got="$(decision)"; if [[ "$got" != "$want" ]]; then echo "FAIL: expected $want, got $got"; exit 1; fi; echo "ok    $want"; }
           printf '%s' '{"tool_name":"mcp__leadmagic__search_people","tool_input":{"limit":50}}' | check allow
           printf '%s' '{"tool_name":"mcp__leadmagic__check_credit_balance"}' | check allow
-          printf '%s' '{"tool_name":"mcp__leadmagic__submit_bulk_job","tool_input":{}}' | check ask
-          printf '{\n  "tool_name" :  "mcp__leadmagic__delete_sheet_rows"\n}\n' | check ask
+          # Gated tools: the server's preview-only first call runs; the call carrying its token asks.
+          printf '%s' '{"tool_name":"mcp__leadmagic__submit_bulk_job","tool_input":{}}' | check allow
+          printf '%s' '{"tool_name":"mcp__leadmagic__submit_bulk_job","tool_input":{"confirmation_token":"v1.1.sig"}}' | check ask
+          printf '{\n  "tool_name" :  "mcp__leadmagic__delete_sheet_rows",\n  "tool_input": { "confirmation_token" : "v1.1.sig" }\n}\n' | check ask
+          # Widget openers carry no token and always ask.
+          printf '%s' '{"tool_name":"mcp__leadmagic__process_attached_csv","tool_input":{}}' | check ask
           printf '%s' '{"tool_name":"mcp__leadmagic__cancel_cloud_run"}' | check allow
           # Reason names the free helpers for the bulk group.
-          printf '%s' '{"tool_name":"mcp__leadmagic__submit_bulk_job"}' | bash "$hook" | jq -e '.hookSpecificOutput.permissionDecisionReason|test("preview_cost")' >/dev/null && echo "ok    bulk reason"
+          printf '%s' '{"tool_name":"mcp__leadmagic__submit_bulk_job","tool_input":{"confirmation_token":"v1.1.sig"}}' | bash "$hook" | jq -e '.hookSpecificOutput.permissionDecisionReason|test("preview_cost")' >/dev/null && echo "ok    bulk reason"
           # No decision for non-LeadMagic tools, garbage, empty stdin, injection, or the escape hatch.
           for input in '{"tool_name":"Bash"}' 'not json' '' '{"tool_name":"mcp__leadmagic__x\",\"y"}'; do
             out="$(printf '%s' "$input" | bash "$hook")"; [[ -z "$out" ]] || { echo "FAIL: expected silence for $input"; exit 1; }

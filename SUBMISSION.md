@@ -38,7 +38,7 @@ claude plugin validate --strict .
 - [x] `claude plugin validate --strict` passes
 - [ ] OAuth smoke: `check_credit_balance` after install
 - [x] Skills invoke without LinkedIn/mobile marketing copy
-- [ ] Approval hook: `check_credit_balance` runs without a prompt; `submit_bulk_job` prompts with the bulk reason
+- [ ] Approval hook: `check_credit_balance` runs without a prompt; `submit_bulk_job` previews without a prompt, then prompts with the bulk reason on the call carrying `confirmation_token`
 - [x] Directory Terms / Policy acknowledged in form
 - [x] Submitted to Claude plugin directory (2026-07-16) — in review
 

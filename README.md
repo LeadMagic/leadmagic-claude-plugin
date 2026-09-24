@@ -76,6 +76,8 @@ Claude Code asks before every MCP tool call unless something says otherwise. Lef
 | Outbound pushes | `push_cloud_rows` |
 | Deletes | `delete_sheet_rows`, `remove_prospect_list_members` |
 
+These tools act in two steps on the server: the first call only returns a preview and a `confirmation_token`, and nothing runs until a second call carries that token. The hook lets the preview through and asks once, on the call that would act. The two upload-widget openers (`create_bulk_upload_session`, `process_attached_csv`) always ask.
+
 `cancel_*` and `pause_*` run without asking: they stop spend rather than start it. Your own `permissions.deny` and `permissions.ask` rules still win over the hook.
 
 To restore stock Claude Code prompting for every tool, set `LEADMAGIC_ASK_ALL=1` in the environment Claude Code runs in.
