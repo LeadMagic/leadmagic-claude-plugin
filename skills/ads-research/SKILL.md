@@ -14,8 +14,9 @@ Use when the user wants recent ads, creatives, or competitive messaging for a co
    - Google → `search_google_ads`
    - Meta → `search_meta_ads`
    - B2B libraries → `search_b2b_ads` / `get_b2b_ad_details`
-3. Summarize creatives and themes — do not invent ad copy not returned by tools.
-4. These tools return competitive research only (not sponsored placements).
+3. Cap cost when the user only needs a sample: ads are billed per ad returned, so pass `limit` (1-100) to cap both the ads returned and the credits spent. `search_b2b_ads` still charges its 1 base credit.
+4. Summarize creatives and themes — do not invent ad copy not returned by tools.
+5. These tools return competitive research only (not sponsored placements).
 
 ## Output
 - Channel + creative highlights

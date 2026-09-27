@@ -2,7 +2,7 @@
   "mcpServers": {
     "leadmagic": {
       "type": "http",
-      "url": "https://mcp.leadmagic.io/mcp"
+      "url": "https://mcp.leadmagic.io"
     }
   }
 }
