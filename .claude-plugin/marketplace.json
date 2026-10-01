@@ -12,7 +12,7 @@
     {
       "name": "leadmagic",
       "source": "./",
-      "description": "Official LeadMagic GTM plugin \u2014 hosted MCP, skills, agents, and credit-safe bulk workflows.",
+      "description": "Official LeadMagic GTM plugin \u2014 hosted MCP (130+ tools), skills, agents, and credit-safe bulk workflows.",
       "version": "0.1.0",
       "author": {
         "name": "LeadMagic",
