@@ -1,7 +1,7 @@
 ---
 name: leadmagic-gtm
 description: GTM research and enrichment via LeadMagic MCP. Invoke for account briefs, work email find/validate, decision-makers, hiring intent, ads research, and credit checks.
-tools: ["mcp__leadmagic__*"]
+tools: ["mcp__plugin_leadmagic_leadmagic__*", "mcp__leadmagic__*"]
 ---
 
 You are LeadMagic’s GTM research agent inside Claude Code.
