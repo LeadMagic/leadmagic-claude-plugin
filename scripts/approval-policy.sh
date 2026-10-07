@@ -4,9 +4,11 @@
 #
 # Auto-approves every LeadMagic tool except ASK_BEFORE_TOOLS, which still prompt
 # because they queue paid jobs, start paid runs, move data in or out of connected
-# systems, or delete. Emits no decision at all (Claude Code's normal permission
-# flow) when stdin cannot be parsed, the tool is not a LeadMagic tool, or
-# LEADMAGIC_ASK_ALL=1 is set.
+# systems, or delete. When the session's permission_mode is already an
+# auto-approve mode (bypassPermissions, auto, or dontAsk), those tools are
+# allowed too — a hook "ask" would force a prompt even in those modes. Emits no
+# decision at all (Claude Code's normal permission flow) when stdin cannot be
+# parsed, the tool is not a LeadMagic tool, or LEADMAGIC_ASK_ALL=1 is set.
 #
 # Contract: the ASK_BEFORE_TOOLS array is parsed by
 # LeadMagic's plugin policy tests and mirrored by the Claude Code
@@ -67,6 +69,22 @@ if [[ ! "$tool" =~ ^mcp__(plugin_leadmagic_)?leadmagic__([a-z0-9_]+)$ ]]; then
 fi
 name="${BASH_REMATCH[2]}"
 
+# PreToolUse input includes permission_mode (default | acceptEdits | plan |
+# auto | dontAsk | bypassPermissions). "ask" from this hook forces a prompt
+# even in auto mode, so honor the modes that already skip approval prompts.
+permission_mode=""
+permission_mode_pattern='"permission_mode"[[:space:]]*:[[:space:]]*"([^"]*)"'
+if [[ "$input" =~ $permission_mode_pattern ]]; then
+  permission_mode="${BASH_REMATCH[1]}"
+fi
+
+session_skips_ask() {
+  case "$permission_mode" in
+    bypassPermissions|auto|dontAsk) return 0 ;;
+    *) return 1 ;;
+  esac
+}
+
 group=""
 for entry in "${ASK_BEFORE_TOOLS[@]}"; do
   if [[ "${entry%%:*}" == "$name" ]]; then
@@ -112,4 +130,8 @@ case "$group" in
   *)
     reason="LeadMagic ${name} needs explicit approval under the LeadMagic plugin policy." ;;
 esac
+if session_skips_ask; then
+  emit allow "LeadMagic ${name}: session permission_mode is ${permission_mode}, so the LeadMagic plugin does not add an approval prompt."
+  exit 0
+fi
 emit ask "$reason"
