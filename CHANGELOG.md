@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+When the session `permission_mode` is `bypassPermissions`, `auto`, or `dontAsk`, the approval hook allows paid and destructive LeadMagic tools instead of forcing an extra prompt. Default, accept-edits, and plan mode still ask. Plugin CI covers both cases.
+
 Plugin CI smoke-tests the approval hook for both plugin-scoped (`mcp__plugin_leadmagic_leadmagic__*`) and hand-added (`mcp__leadmagic__*`) tool names, including preview-vs-token asks and the silent cases.
 
 ## 0.2.2 — 2026-10-01

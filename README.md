@@ -77,7 +77,9 @@ Claude Code asks before every MCP tool call unless something says otherwise. Lef
 | Outbound HTTP | `test_sheet_http_request`, `save_sheet_http_request` |
 | Deletes | `delete_sheet_rows`, `delete_sheet_column`, `remove_prospect_list_members` |
 
-These tools act in two steps on the server: the first call only returns a preview and a `confirmation_token`, and nothing runs until a second call carries that token. The hook lets the preview through and asks once, on the call that would act. The two upload-widget openers (`create_bulk_upload_session`, `process_attached_csv`) always ask.
+These tools act in two steps on the server: the first call only returns a preview and a `confirmation_token`, and nothing runs until a second call carries that token. The hook lets the preview through and asks once, on the call that would act. The two upload-widget openers (`create_bulk_upload_session`, `process_attached_csv`) always ask in the default permission mode.
+
+If the session is already in a mode that skips approval prompts — `permission_mode` of `bypassPermissions`, `auto`, or `dontAsk` — the hook allows those tools instead of returning `ask`. A hook `ask` would force a prompt even in auto mode. `default`, `acceptEdits`, and `plan` still ask.
 
 `cancel_*` and `pause_*` run without asking: they stop spend rather than start it. Your own `permissions.deny` and `permissions.ask` rules still win over the hook.
 

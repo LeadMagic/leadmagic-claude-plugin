@@ -96,6 +96,12 @@ jobs:
             printf '%s' "{\"tool_name\":\"${prefix}process_attached_csv\",\"tool_input\":{}}" | check ask "$prefix widget"
             printf '%s' "{\"tool_name\":\"${prefix}cancel_cloud_run\"}" | check allow "$prefix cancel"
           done
+          printf '%s' '{"permission_mode":"default","tool_name":"mcp__leadmagic__submit_bulk_job","tool_input":{"confirmation_token":"v1.1.sig"}}' | check ask "default mode token"
+          printf '%s' '{"permission_mode":"acceptEdits","tool_name":"mcp__leadmagic__process_attached_csv","tool_input":{}}' | check ask "acceptEdits widget"
+          for mode in bypassPermissions auto dontAsk; do
+            printf '%s' "{\"permission_mode\":\"${mode}\",\"tool_name\":\"mcp__leadmagic__submit_bulk_job\",\"tool_input\":{\"confirmation_token\":\"v1.1.sig\"}}" | check allow "$mode token"
+            printf '%s' "{\"permission_mode\":\"${mode}\",\"tool_name\":\"mcp__plugin_leadmagic_leadmagic__process_attached_csv\",\"tool_input\":{}}" | check allow "$mode widget"
+          done
           printf '%s' '{"tool_name":"mcp__plugin_leadmagic_leadmagic__submit_bulk_job","tool_input":{"confirmation_token":"v1.1.sig"}}' | bash "$hook" | jq -e '.hookSpecificOutput.hookEventName == "PreToolUse" and (.hookSpecificOutput.permissionDecisionReason | test("preview_cost"))' >/dev/null
           echo "ok    hookEventName and bulk reason"
           for input in '{"tool_name":"Bash"}' 'not json' '' '{"tool_name":"mcp__leadmagic__x\",\"y"}'; do
