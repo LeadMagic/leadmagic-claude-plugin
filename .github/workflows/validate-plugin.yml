@@ -82,6 +82,31 @@ jobs:
           shellcheck --version
           find . -name '*.sh' -not -path './.git/*' -print0 | xargs -0 shellcheck
 
+      - name: Approval policy hook smoke
+        run: |
+          set -euo pipefail
+          hook=scripts/approval-policy.sh
+          decision() { bash "$hook" | jq -r '.hookSpecificOutput.permissionDecision // "none"'; }
+          check() { local want="$1"; local got; got="$(decision)"; if [[ "$got" != "$want" ]]; then echo "FAIL: expected $want, got $got"; exit 1; fi; echo "ok    $want  $2"; }
+          # Plugin-bundled tools are mcp__plugin_<plugin>_<server>__<tool>. A hand-added server stays mcp__leadmagic__*.
+          for prefix in mcp__plugin_leadmagic_leadmagic__ mcp__leadmagic__; do
+            printf '%s' "{\"tool_name\":\"${prefix}search_people\",\"tool_input\":{\"limit\":50}}" | check allow "$prefix search"
+            printf '%s' "{\"tool_name\":\"${prefix}submit_bulk_job\",\"tool_input\":{}}" | check allow "$prefix preview"
+            printf '%s' "{\"tool_name\":\"${prefix}submit_bulk_job\",\"tool_input\":{\"confirmation_token\":\"v1.1.sig\"}}" | check ask "$prefix token"
+            printf '%s' "{\"tool_name\":\"${prefix}process_attached_csv\",\"tool_input\":{}}" | check ask "$prefix widget"
+            printf '%s' "{\"tool_name\":\"${prefix}cancel_cloud_run\"}" | check allow "$prefix cancel"
+          done
+          printf '%s' '{"tool_name":"mcp__plugin_leadmagic_leadmagic__submit_bulk_job","tool_input":{"confirmation_token":"v1.1.sig"}}' | bash "$hook" | jq -e '.hookSpecificOutput.hookEventName == "PreToolUse" and (.hookSpecificOutput.permissionDecisionReason | test("preview_cost"))' >/dev/null
+          echo "ok    hookEventName and bulk reason"
+          for input in '{"tool_name":"Bash"}' 'not json' '' '{"tool_name":"mcp__leadmagic__x\",\"y"}'; do
+            out="$(printf '%s' "$input" | bash "$hook")"; [[ -z "$out" ]] || { echo "FAIL: expected silence for $input"; exit 1; }
+          done
+          out="$(printf '%s' '{"tool_name":"mcp__plugin_leadmagic_leadmagic__search_people"}' | LEADMAGIC_ASK_ALL=1 bash "$hook")"; [[ -z "$out" ]] || { echo "FAIL: ASK_ALL should be silent"; exit 1; }
+          echo "ok    silent cases"
+          count="$(grep -cE '^  "[a-z0-9_]+:(bulk|run|import|push|delete)"$' "$hook")"
+          test "$count" -ge 15
+          echo "ok    ask-list entries: $count"
+
       - name: Check relative Markdown links
         run: |
           set -euo pipefail
