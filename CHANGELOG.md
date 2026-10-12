@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.3 — 2026-10-12
+
+- Guidance matches the current hosted MCP tools: bulk submits use `submit_detected_bulk_job`, and Sheets imports, runs, and saved lists use each tool's own named parameters.
+
 ## 0.3.2 — 2026-10-12
 
 - Directory listing: icon, documentation, support, and terms of service links.
