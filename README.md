@@ -2,20 +2,21 @@
 
 <img src="https://raw.githubusercontent.com/LeadMagic/leadmagic-claude-plugin/main/assets/logo.svg" width="64" height="64" alt="LeadMagic logo">
 
-Official LeadMagic plugin for [Claude Code](https://code.claude.com): skills, agents, an approval-policy hook, and the hosted MCP connector (130+ tools) at `https://mcp.leadmagic.io/mcp`.
+Official LeadMagic plugin for [Claude Code](https://code.claude.com): skills, agents, an approval-policy hook, and the hosted MCP connector (80+ tools; Sheets tools appear only when your workspace has Sheets) at `https://mcp.leadmagic.io/mcp`.
 
 [LeadMagic B2B enrichment](https://leadmagic.io?utm_source=github&utm_medium=readme&utm_campaign=leadmagic-claude-plugin&utm_content=readme-intro) · [MCP setup guide](https://leadmagic.io/docs/mcp/setup?utm_source=github&utm_medium=readme&utm_campaign=leadmagic-claude-plugin&utm_content=readme-intro) · [Pricing and credits](https://leadmagic.io/pricing?utm_source=github&utm_medium=readme&utm_campaign=leadmagic-claude-plugin&utm_content=readme-intro)
 
-> Search access and rate limits depend on your plan. Check [current pricing](https://leadmagic.io/pricing?utm_source=github&utm_medium=readme&utm_campaign=leadmagic-claude-plugin&utm_content=readme-intro) before a large run; the `market-search` skill covers pagination and account entitlements.
+> Search cost, rate limits, and fair-use caps depend on your plan. Check [current pricing](https://leadmagic.io/pricing?utm_source=github&utm_medium=readme&utm_campaign=leadmagic-claude-plugin&utm_content=readme-intro) before a large run; the `market-search` skill covers pagination and plan-dependent search cost.
 >
 > Prefer raw REST + API-level skills? See [LeadMagic/leadmagic-skills](https://github.com/LeadMagic/leadmagic-skills) (`npx skills add LeadMagic/leadmagic-skills`).
 
-## Current integration contract
+## What this plugin connects to
 
-Reviewed against [LeadMagic's public documentation](https://leadmagic.io/docs?utm_source=github&utm_medium=readme&utm_campaign=leadmagic-claude-plugin&utm_content=readme-current-integration-contract) on 2026-09-06. REST uses `https://api.leadmagic.io` and `X-API-Key`; hosted MCP uses `https://mcp.leadmagic.io/mcp` with OAuth; lm-tui uses `lm login`. Keep credentials and customer data out of committed examples.
+- **One network endpoint.** The plugin's only server is `https://mcp.leadmagic.io/mcp`, over HTTP with OAuth sign-in in your browser. No API key goes into any config file.
+- **Nothing sent elsewhere.** The plugin's skills, agents, commands, and hook send nothing to any other host. The hook is a local shell script that makes no network calls.
+- **Sheet API columns are the one exception, and only if you set one up.** If you configure an API (HTTP) column in a LeadMagic sheet, LeadMagic's servers call the host you chose, with that row's values. Saving or testing such a request always asks for approval first (see below).
 
-Email Finder returns validated work emails. Use Email Validation for externally sourced addresses. Check the [current pricing and credit rules](https://leadmagic.io/docs/v1/credits?utm_source=github&utm_medium=readme&utm_campaign=leadmagic-claude-plugin&utm_content=readme-current-integration-contract) before paid work; costs are endpoint- and plan-dependent. API-only integrations must not send app-only `preview` options.
-
+Prefer raw REST with an API key? That lives in a separate project: [LeadMagic/leadmagic-skills](https://github.com/LeadMagic/leadmagic-skills). Finder tools return already-validated work emails. Use `validate_work_email` only for addresses that came from somewhere else. Costs depend on the tool and your plan — see the [credit rules](https://leadmagic.io/docs/v1/credits?utm_source=github&utm_medium=readme&utm_campaign=leadmagic-claude-plugin&utm_content=readme-connects-to), and call the free `preview_cost` before paid work.
 
 ## Install
 
@@ -51,7 +52,7 @@ The bundled connection uses OAuth; no REST API key is required.
 | `contact-lookup` | Find or validate work email |
 | `decision-makers` | Buyers / roles at a company |
 | `hiring-intent` | Jobs + hiring signals |
-| `market-search` | Broad people/company/jobs search — unlimited-plan aware, cursor pagination |
+| `market-search` | Broad people/company/jobs search — plan-aware cost, fair-use cap, cursor pagination |
 | `ads-research` | Google / Meta / B2B creatives |
 | `bulk-enrichment` | CSV queue + poll |
 | `credit-guard` | Spend discipline |
@@ -63,29 +64,44 @@ The bundled connection uses OAuth; no REST API key is required.
 
 ## Credit safety and approval prompts
 
-Claude Code asks before every MCP tool call unless something says otherwise. Left alone, a long LeadMagic task stalls on a prompt every step. The plugin ships a `PreToolUse` hook (`scripts/approval-policy.sh`) that answers for you:
+Claude Code normally asks before every MCP tool call. Left alone, a long LeadMagic task would stall on a prompt at every step. So the plugin ships a `PreToolUse` hook (`scripts/approval-policy.sh`) that answers some of those prompts for you.
 
-- **Runs without asking:** every read and single-record tool — lookups, searches, validation, composites like `account_intel`, and sheet reads and cell edits. Some of these spend a credit or two; the `credit-guard` skill has the model call `preview_cost` before anything larger.
-- **Still asks, with a reason naming the tool and what to check:**
+**What the hook auto-approves (no prompt):**
+
+- **Read and single-record tools**: lookups, searches, validation, composites like `account_intel`, sheet reads, and cell edits.
+- Some of these spend a credit or two per call. The `credit-guard` skill has the model call the free `preview_cost` before anything larger.
+
+**What still asks, with a reason naming the tool and what to check:**
 
 | Group | Tools |
 | --- | --- |
-| Bulk jobs | `submit_bulk_job`, `submit_detected_bulk_job`, `create_bulk_upload_session`, `process_attached_csv`, `restart_bulk_job` |
-| Paid runs | `run_sheet_column`, `run_cloud_workflow`, `publish_cloud_workflow`, `resume_cloud_run`, `resume_bulk_job` |
-| Imports into a sheet | `import_cloud_crm`, `import_cloud_sequencer` |
-| Outbound pushes | `push_cloud_rows` |
-| Outbound HTTP | `test_sheet_http_request`, `save_sheet_http_request` |
-| Deletes | `delete_sheet_rows`, `delete_sheet_column`, `remove_prospect_list_members` |
+| Bulk jobs | `submit_bulk_job`, `submit_detected_bulk_job`, `create_bulk_upload_session`, `process_attached_csv`, `restart_bulk_job`, `find_local_leads` |
+| Paid runs | `run_sheet_column`, `resume_bulk_job`, `set_sheet_column_auto_run` |
+| Recipe import | `import_sheet_recipe` |
+| Outbound HTTP | `test_sheet_http_request`, `save_sheet_http_request`, `update_sheet_http_request` |
+| Deletes | `delete_sheet_rows`, `delete_sheet_column` |
 
-These tools act in two steps on the server: the first call only returns a preview and a `confirmation_token`, and nothing runs until a second call carries that token. The hook lets the preview through and asks once, on the call that would act. The two upload-widget openers (`create_bulk_upload_session`, `process_attached_csv`) always ask in the default permission mode.
+The hook's internal list also names a few other server-gated tool names. It mirrors the server's own approval gate, and this plugin does not currently expose those tools.
 
-If the session is already in a mode that skips approval prompts — `permission_mode` of `bypassPermissions`, `auto`, or `dontAsk` — the hook allows those tools instead of returning `ask`. A hook `ask` would force a prompt even in auto mode. `default`, `acceptEdits`, and `plan` still ask.
+**How the two-step approval works:**
 
-`cancel_*` and `pause_*` run without asking: they stop spend rather than start it. Your own `permissions.deny` and `permissions.ask` rules still win over the hook.
+- These tools act in two steps on the server. The first call only returns a preview and a `confirmation_token`.
+- Nothing runs until a second call carries that token.
+- The hook lets the preview through and asks you once, on the call that would act.
+- The two upload-widget openers (`create_bulk_upload_session`, `process_attached_csv`) always ask in the default permission mode.
 
-To restore stock Claude Code prompting for every tool, set `LEADMAGIC_ASK_ALL=1` in the environment Claude Code runs in.
+**Permission modes:**
 
-Connected LeadMagic without the plugin (`claude mcp add …`)? Hooks only ship with the plugin. Paste the equivalent policy into `~/.claude/settings.json` instead — the snippet is under Settings → API → AI tooling → Claude Code in the LeadMagic app.
+- If your session already skips approval prompts (`permission_mode` of `bypassPermissions`, `auto`, or `dontAsk`), the hook allows those tools instead of returning `ask`. A hook `ask` would otherwise force a prompt even in auto mode.
+- `default`, `acceptEdits`, and `plan` modes still ask.
+
+**Always allowed:** `cancel_*` and `pause_*` run without asking, because they stop spend rather than start it.
+
+**Your own rules win:** your `permissions.deny` and `permissions.ask` rules still take precedence over the hook.
+
+**Opt out:** set `LEADMAGIC_ASK_ALL=1` in the environment Claude Code runs in. That restores stock Claude Code prompting for every LeadMagic tool.
+
+**Connected LeadMagic without the plugin** (`claude mcp add …`)? Hooks only ship with the plugin. Paste the equivalent policy into `~/.claude/settings.json` instead. The snippet is in the LeadMagic app under Settings → API → AI tooling → Claude Code.
 
 ## Validate
 

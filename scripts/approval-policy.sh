@@ -120,7 +120,7 @@ case "$group" in
   bulk)
     reason="LeadMagic ${name} queues a paid bulk job that bills every row. Check preview_cost and check_credit_balance, confirm the row count, then approve." ;;
   run)
-    reason="LeadMagic ${name} starts a paid run. Confirm the previewed max credits (run_sheet_column preview or quote_cloud_workflow) before approving." ;;
+    reason="LeadMagic ${name} starts a paid run. Confirm the max credits in the run_sheet_column preview before approving." ;;
   import)
     reason="LeadMagic ${name} imports records from a connected CRM or sequencer into a LeadMagic sheet. Check platform, object and maxRows before approving." ;;
   push)
