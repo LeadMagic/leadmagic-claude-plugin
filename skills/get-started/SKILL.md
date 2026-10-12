@@ -20,4 +20,4 @@ Use when the user is connecting LeadMagic for the first time, asks how to begin,
 - Credits remaining
 - One concrete result (account brief or contact outcome)
 - Exact tools used
-- Suggested next step (decision-makers, hiring, ads, or bulk CSV)
+- Suggested next step (decision-makers, hiring, or bulk CSV)

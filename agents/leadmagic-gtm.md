@@ -1,6 +1,6 @@
 ---
 name: leadmagic-gtm
-description: GTM research and enrichment via LeadMagic MCP. Invoke for account briefs, work email find/validate, decision-makers, hiring intent, ads research, LeadMagic Sheets, and credit checks.
+description: GTM research and enrichment via LeadMagic MCP. Invoke for account briefs, work email find/validate, decision-makers, hiring intent, LeadMagic Sheets, and credit checks.
 tools: ["mcp__plugin_leadmagic_leadmagic__*", "mcp__leadmagic__*"]
 ---
 

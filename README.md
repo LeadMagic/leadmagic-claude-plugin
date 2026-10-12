@@ -2,7 +2,7 @@
 
 <img src="https://raw.githubusercontent.com/LeadMagic/leadmagic-claude-plugin/main/assets/logo.svg" width="64" height="64" alt="LeadMagic logo">
 
-Official LeadMagic plugin for [Claude Code](https://code.claude.com): skills, agents, an approval-policy hook, and the hosted MCP connector (75+ tools; Sheets tools appear only when your workspace has Sheets) at `https://mcp.leadmagic.io/mcp`.
+Official LeadMagic plugin for [Claude Code](https://code.claude.com): skills, agents, an approval-policy hook, and the hosted MCP connector (70+ tools; Sheets tools appear only when your workspace has Sheets) at `https://mcp.leadmagic.io/mcp`.
 
 [LeadMagic B2B enrichment](https://leadmagic.io?utm_source=github&utm_medium=readme&utm_campaign=leadmagic-claude-plugin&utm_content=readme-intro) · [MCP setup guide](https://leadmagic.io/docs/mcp/setup?utm_source=github&utm_medium=readme&utm_campaign=leadmagic-claude-plugin&utm_content=readme-intro) · [Pricing and credits](https://leadmagic.io/pricing?utm_source=github&utm_medium=readme&utm_campaign=leadmagic-claude-plugin&utm_content=readme-intro)
 
@@ -53,7 +53,6 @@ The bundled connection uses OAuth; no REST API key is required.
 | `decision-makers` | Buyers / roles at a company |
 | `hiring-intent` | Jobs + hiring signals |
 | `market-search` | Broad people/company/jobs search — plan-aware cost, fair-use cap, cursor pagination |
-| `ads-research` | Google / Meta / B2B creatives |
 | `bulk-enrichment` | CSV / list jobs, local-business lists, watch, export, restart |
 | `credit-guard` | Spend discipline |
 | `sheets` | Build, run, and read LeadMagic Sheets (enrichment + AI columns) |
@@ -73,7 +72,6 @@ The bundled connection uses OAuth; no REST API key is required.
 | `/leadmagic:lookalikes` | Expand from seed companies |
 | `/leadmagic:hiring-signals` | Rank accounts by hiring activity |
 | `/leadmagic:job-change-sweep` | Find contacts who changed jobs |
-| `/leadmagic:competitor-ads` | Competitor ad creatives and angles |
 | `/leadmagic:enrich-sheet` | Build and run columns in a sheet |
 | `/leadmagic:usage-report` | Credit and usage report (free) |
 
