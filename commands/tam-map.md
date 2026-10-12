@@ -12,4 +12,4 @@ Map the TAM for: $ARGUMENTS
 3. **Recommend.** Present the matrix and recommend which segments to work.
 4. **Pull only the segments the user picks**, by cursor paging (`market-search` skill). Each snapshot returns at most 1,000 rows, so keep segments narrow.
 
-No contact unlocks in this command. Hand the chosen accounts to `/leadmagic:decision-makers` or `/leadmagic:build-list`.
+No contact unlocks in this command. Hand the chosen accounts to `/leadmagic:find-buyers` or `/leadmagic:build-list`.
