@@ -67,7 +67,7 @@ The bundled connection uses OAuth; no REST API key is required.
 | `/leadmagic:research-company` | Account brief via `account_intel` |
 | `/leadmagic:validate-email` | Validate one work email |
 | `/leadmagic:waterfall-email` | Cheapest-first email for one contact |
-| `/leadmagic:decision-makers` | Buyers at a target account |
+| `/leadmagic:find-buyers` | Buyers at a target account |
 | `/leadmagic:build-list` | ICP prospect list via search |
 | `/leadmagic:tam-map` | Segment and size a market |
 | `/leadmagic:lookalikes` | Expand from seed companies |
