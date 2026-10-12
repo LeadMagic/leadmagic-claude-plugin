@@ -118,6 +118,23 @@ Custom HTTP (API request) columns are not available through this plugin. Users s
 - `pause_sheet_run` keeps finished cells and stops charging. To continue later, run the column again with `row_state: "notRun"`.
 - `cancel_sheet_run` stops for good. Unstarted rows are not charged.
 
+## Imports, workspace runs, and saved lists
+
+These tools take only their own named parameters. Pass ids from the list tool shown.
+
+| Task | Tools and parameters |
+| --- | --- |
+| Connected apps | `list_cloud_connections` (no parameters) |
+| CRM import | `list_cloud_crm_objects` (`crm_platform`) → `list_cloud_crm_fields` / `list_cloud_crm_filters` (`crm_platform`, `object`) → `import_cloud_crm` (`crm_platform`, `object`, `fields` as `[{field, label?}]`, `idempotency_key`; optional `list_view_id`, `lifecycle_stage`, `name`, `max_rows`) |
+| Outbound import | `list_cloud_campaigns` (`platform`, optional `search`, `limit`) → `import_cloud_sequencer` (`platform`, `campaigns`, `fields`, `idempotency_key`; optional `name`, `max_rows`) |
+| Import status | `list_cloud_imports` (`sheet_id`) → `cancel_cloud_import` (`sheet_id`, `import_id`) |
+| Runs and deliveries | `list_cloud_runs` (`sheet_id`, optional `status`, `column_key`, `active_only`) → `pause_cloud_run` / `cancel_cloud_run` (`sheet_id`, `run_id`); `list_cloud_pushes` (`sheet_id`) |
+| Saved prospect lists | `list_prospect_lists` (`list_type`: `people` or `company`) → `get_prospect_list` / `export_prospect_list` (`list_type`, `list_id`); `create_prospect_list` (`list_type`, `name`, optional `description`, `rows`); `add_prospect_list_members` (`list_type`, `list_id`, `rows`); `update_prospect_list` (`list_type`, `list_id`, `name` and/or `description`); `remove_prospect_list_members` (`list_type`, `list_id`, `member_ids`) |
+| Saved searches | `list_saved_searches` (`search_type`: `people` or `company`) → `get_saved_search` / `rerun_saved_search` (`search_type`, `search_id`) |
+
+- Generate one `idempotency_key` (a UUID) per import and resend it unchanged on a retry.
+- Imports ask for confirmation first. Connect a CRM or outbound platform in the app (Integrations), not over MCP.
+
 ## Undo
 
 Deletes are soft and restorable:

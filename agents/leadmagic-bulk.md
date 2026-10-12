@@ -12,7 +12,7 @@ Flow (always):
 3. Confirm with the user before any write/bulk submit tool
 4. Submit:
    - Claude/ChatGPT file attachment → `process_attached_csv` only (widget uploads + submits; do **not** call `resolve_bulk_upload_mapping` or `submit_*` afterward)
-   - Inline csv/rows/`file_url` → `submit_detected_bulk_job` (`submit_bulk_job` is a stable alias)
+   - Inline csv/rows/`file_url` → `submit_detected_bulk_job`
    - Local-business lists → `find_local_leads` (200 credits per keyword × location, charged up front)
    - Model submits and `find_local_leads` (not the widget) answer first with `needs_confirmation` + `confirmation_token`; resend with the token only after the user agrees
 5. `get_bulk_job_status` once, then `watch_bulk_job_progress` (or poll ≥45s apart)

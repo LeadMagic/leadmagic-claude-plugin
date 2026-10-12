@@ -93,7 +93,7 @@ Claude Code normally asks before every MCP tool call. Left alone, a long LeadMag
 
 | Group | Tools |
 | --- | --- |
-| Bulk jobs | `submit_bulk_job`, `submit_detected_bulk_job`, `create_bulk_upload_session`, `process_attached_csv`, `restart_bulk_job`, `find_local_leads` |
+| Bulk jobs | `submit_detected_bulk_job`, `create_bulk_upload_session`, `process_attached_csv`, `restart_bulk_job`, `find_local_leads` |
 | Paid runs | `run_sheet_column`, `resume_bulk_job`, `set_sheet_column_auto_run` |
 | Imports | `import_sheet_recipe`, `import_cloud_crm`, `import_cloud_sequencer` |
 | Cell edits and stopping a sheet run | `set_sheet_cells`, `cancel_sheet_run` |

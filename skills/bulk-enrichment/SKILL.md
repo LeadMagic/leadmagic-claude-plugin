@@ -22,7 +22,7 @@ If they want to see and iterate on the results in a grid, use the `sheets` skill
 
 ## Submit
 - **A file attached in Claude** → `process_attached_csv` only. The widget uploads and submits on its own, so do not call `resolve_bulk_upload_mapping` or `submit_*` after it.
-- **Inline CSV, rows, or an HTTPS `file_url`** → `submit_detected_bulk_job`. `submit_bulk_job` is a stable alias.
+- **Inline CSV, rows, or an HTTPS `file_url`** → `submit_detected_bulk_job`.
   - Common enrichments: `work_email_finder`, `email_validation`, `mobile_finder` (only when the user asks for phones), `job_change`, `company_firmographics`.
   - For profile URL → work email, pick the profile-to-email option from the tool's `enrichment` list.
   - For larger files, prefer `file_url` with `format: "auto"` over pasting CSV text into the call.
