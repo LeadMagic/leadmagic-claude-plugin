@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.3.1 — 2026-10-12
+
+- Command argument hints are valid YAML.
+- Agents and the approval hook use the plugin-scoped MCP tool names.
+- Asks before Sheet cell edits, stopping a sheet run, and connected-app imports.
+- Adds the privacy policy URL to the manifest.
+
 ## 0.3.0 — 2026-10-12
 
 - New `sheets` and `outbound-recipes` skills.
