@@ -14,7 +14,7 @@ Official LeadMagic plugin for [Claude Code](https://code.claude.com): skills, ag
 
 - **One network endpoint.** The plugin's only server is `https://mcp.leadmagic.io/mcp`, over HTTP with OAuth sign-in in your browser. No API key goes into any config file.
 - **Nothing sent elsewhere.** The plugin's skills, agents, commands, and hook send nothing to any other host. The hook is a local shell script that makes no network calls.
-- **Sheet API columns are the one exception, and only if you set one up.** If you configure an API (HTTP) column in a LeadMagic sheet, LeadMagic's servers call the host you chose, with that row's values. Saving or testing such a request always asks for approval first (see below).
+- **Custom HTTP sheet columns are configured in the LeadMagic app, not through this plugin.** If you set one up there, LeadMagic's servers call the host you chose, with that row's values.
 
 Prefer raw REST with an API key? That lives in a separate project: [LeadMagic/leadmagic-skills](https://github.com/LeadMagic/leadmagic-skills). Finder tools return already-validated work emails. Use `validate_work_email` only for addresses that came from somewhere else. Costs depend on the tool and your plan — see the [credit rules](https://leadmagic.io/docs/v1/credits?utm_source=github&utm_medium=readme&utm_campaign=leadmagic-claude-plugin&utm_content=readme-connects-to), and call the free `preview_cost` before paid work.
 
@@ -54,8 +54,28 @@ The bundled connection uses OAuth; no REST API key is required.
 | `hiring-intent` | Jobs + hiring signals |
 | `market-search` | Broad people/company/jobs search — plan-aware cost, fair-use cap, cursor pagination |
 | `ads-research` | Google / Meta / B2B creatives |
-| `bulk-enrichment` | CSV queue + poll |
+| `bulk-enrichment` | CSV / list jobs, local-business lists, watch, export, restart |
 | `credit-guard` | Spend discipline |
+| `sheets` | Build, run, and read LeadMagic Sheets (enrichment + AI columns) |
+| `outbound-recipes` | Composable multi-step outbound recipes |
+
+## Commands
+
+| Command | What it does |
+|---------|--------------|
+| `/leadmagic:check-credits` | Credit balance (free) |
+| `/leadmagic:research-company` | Account brief via `account_intel` |
+| `/leadmagic:validate-email` | Validate one work email |
+| `/leadmagic:waterfall-email` | Cheapest-first email for one contact |
+| `/leadmagic:decision-makers` | Buyers at a target account |
+| `/leadmagic:build-list` | ICP prospect list via search |
+| `/leadmagic:tam-map` | Segment and size a market |
+| `/leadmagic:lookalikes` | Expand from seed companies |
+| `/leadmagic:hiring-signals` | Rank accounts by hiring activity |
+| `/leadmagic:job-change-sweep` | Find contacts who changed jobs |
+| `/leadmagic:competitor-ads` | Competitor ad creatives and angles |
+| `/leadmagic:enrich-sheet` | Build and run columns in a sheet |
+| `/leadmagic:usage-report` | Credit and usage report (free) |
 
 ## Agents
 
@@ -78,7 +98,6 @@ Claude Code normally asks before every MCP tool call. Left alone, a long LeadMag
 | Bulk jobs | `submit_bulk_job`, `submit_detected_bulk_job`, `create_bulk_upload_session`, `process_attached_csv`, `restart_bulk_job`, `find_local_leads` |
 | Paid runs | `run_sheet_column`, `resume_bulk_job`, `set_sheet_column_auto_run` |
 | Recipe import | `import_sheet_recipe` |
-| Outbound HTTP | `test_sheet_http_request`, `save_sheet_http_request`, `update_sheet_http_request` |
 | Deletes | `delete_sheet_rows`, `delete_sheet_column` |
 
 The hook's internal list also names a few other server-gated tool names. It mirrors the server's own approval gate, and this plugin does not currently expose those tools.
