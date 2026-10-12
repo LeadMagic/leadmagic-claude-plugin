@@ -33,6 +33,8 @@ claude --plugin-dir /path/to/leadmagic-claude-plugin
 /plugin install leadmagic@leadmagic-plugins
 ```
 
+The GitHub marketplace install uses the remote source revision held by Claude Code's marketplace cache; it does not mirror a local checkout. A local checkout may contain newer, uncommitted, or branch-only changes. To test the exact files in a checkout, use `claude --plugin-dir /path/to/leadmagic-claude-plugin` instead.
+
 Or install it from the [Claude directory](https://claude.ai/directory).
 
 ## Connect

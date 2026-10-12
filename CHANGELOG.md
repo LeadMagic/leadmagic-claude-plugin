@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.4 — 2026-10-12
+
+- Contact lookup reports the exact `valid`, `invalid`, or `unknown` email status; catch-all/unknown is never treated as deliverable, and the waterfall proceeds only until a valid result.
+- Plugin and marketplace author support email is `support@leadmagic.io`.
+- README distinguishes a remote marketplace installation from the exact local checkout loaded with `--plugin-dir`.
+
 ## 0.3.3 — 2026-10-12
 
 - Guidance matches the current hosted MCP tools: bulk submits use `submit_detected_bulk_job`, and Sheets imports, runs, and saved lists use each tool's own named parameters.
