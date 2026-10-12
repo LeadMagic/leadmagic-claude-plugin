@@ -24,11 +24,24 @@
 		"bulk-enrichment"
 	],
 	"skills": "./skills/",
-	"agents": ["./agents/leadmagic-gtm.md", "./agents/leadmagic-bulk.md"],
+	"agents": [
+		"./agents/leadmagic-gtm.md",
+		"./agents/leadmagic-bulk.md"
+	],
 	"mcpServers": "./.mcp.json",
 	"commands": [
+		"./commands/build-list.md",
 		"./commands/check-credits.md",
+		"./commands/competitor-ads.md",
+		"./commands/decision-makers.md",
+		"./commands/enrich-sheet.md",
+		"./commands/hiring-signals.md",
+		"./commands/job-change-sweep.md",
+		"./commands/lookalikes.md",
 		"./commands/research-company.md",
-		"./commands/validate-email.md"
+		"./commands/tam-map.md",
+		"./commands/usage-report.md",
+		"./commands/validate-email.md",
+		"./commands/waterfall-email.md"
 	]
 }
