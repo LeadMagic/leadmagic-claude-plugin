@@ -96,6 +96,7 @@ Claude Code normally asks before every MCP tool call. Left alone, a long LeadMag
 | Bulk jobs | `submit_bulk_job`, `submit_detected_bulk_job`, `create_bulk_upload_session`, `process_attached_csv`, `restart_bulk_job`, `find_local_leads` |
 | Paid runs | `run_sheet_column`, `resume_bulk_job`, `set_sheet_column_auto_run` |
 | Imports | `import_sheet_recipe`, `import_cloud_crm`, `import_cloud_sequencer` |
+| Cell edits and stopping a sheet run | `set_sheet_cells`, `cancel_sheet_run` |
 | Deletes | `delete_sheet_rows`, `delete_sheet_column` |
 
 **How the two-step approval works:**
@@ -110,7 +111,7 @@ Claude Code normally asks before every MCP tool call. Left alone, a long LeadMag
 - If your session already skips approval prompts (`permission_mode` of `bypassPermissions`, `auto`, or `dontAsk`), the hook allows those tools instead of returning `ask`. A hook `ask` would otherwise force a prompt even in auto mode.
 - `default`, `acceptEdits`, and `plan` modes still ask.
 
-**Always allowed:** `cancel_*` and `pause_*` run without asking, because they stop spend rather than start it.
+**Always allowed:** `pause_*` and bulk-job cancellations run without asking, because they stop spend rather than start it. `cancel_sheet_run` asks because it changes an existing sheet run.
 
 **Your own rules win:** your `permissions.deny` and `permissions.ask` rules still take precedence over the hook.
 
