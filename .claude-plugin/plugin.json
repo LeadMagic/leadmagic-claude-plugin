@@ -2,7 +2,7 @@
 	"name": "leadmagic",
 	"displayName": "LeadMagic",
 	"version": "0.3.0",
-	"description": "Official LeadMagic GTM plugin for Claude Code. Connects to hosted MCP (70+ tools) for B2B account research, work email discovery and validation, decision-maker search, hiring intent, LeadMagic Sheets, bulk enrichment, and credit-aware workflows.",
+	"description": "Official LeadMagic GTM plugin for Claude Code. Connects to hosted MCP (60+ tools) for B2B account research, work email discovery and validation, decision-maker search, hiring intent, LeadMagic Sheets, bulk enrichment, and credit-aware workflows.",
 	"author": {
 		"name": "LeadMagic",
 		"email": "plugins@leadmagic.io",

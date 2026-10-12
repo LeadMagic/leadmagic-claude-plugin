@@ -2,7 +2,7 @@
 
 <img src="https://raw.githubusercontent.com/LeadMagic/leadmagic-claude-plugin/main/assets/logo.svg" width="64" height="64" alt="LeadMagic logo">
 
-Official LeadMagic plugin for [Claude Code](https://code.claude.com): skills, agents, an approval-policy hook, and the hosted MCP connector (70+ tools; Sheets tools appear only when your workspace has Sheets) at `https://mcp.leadmagic.io/mcp`.
+Official LeadMagic plugin for [Claude Code](https://code.claude.com): skills, agents, an approval-policy hook, and the hosted MCP connector (60+ tools; Sheets tools appear only when your workspace has Sheets) at `https://mcp.leadmagic.io/mcp`.
 
 [LeadMagic B2B enrichment](https://leadmagic.io?utm_source=github&utm_medium=readme&utm_campaign=leadmagic-claude-plugin&utm_content=readme-intro) · [MCP setup guide](https://leadmagic.io/docs/mcp/setup?utm_source=github&utm_medium=readme&utm_campaign=leadmagic-claude-plugin&utm_content=readme-intro) · [Pricing and credits](https://leadmagic.io/pricing?utm_source=github&utm_medium=readme&utm_campaign=leadmagic-claude-plugin&utm_content=readme-intro)
 
@@ -95,7 +95,7 @@ Claude Code normally asks before every MCP tool call. Left alone, a long LeadMag
 | --- | --- |
 | Bulk jobs | `submit_bulk_job`, `submit_detected_bulk_job`, `create_bulk_upload_session`, `process_attached_csv`, `restart_bulk_job`, `find_local_leads` |
 | Paid runs | `run_sheet_column`, `resume_bulk_job`, `set_sheet_column_auto_run` |
-| Recipe import | `import_sheet_recipe` |
+| Imports | `import_sheet_recipe`, `import_cloud_crm`, `import_cloud_sequencer` |
 | Deletes | `delete_sheet_rows`, `delete_sheet_column` |
 
 **How the two-step approval works:**

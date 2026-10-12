@@ -24,6 +24,8 @@ ASK_BEFORE_TOOLS=(
   "delete_sheet_column:delete"
   "delete_sheet_rows:delete"
   "find_local_leads:bulk"
+  "import_cloud_crm:import"
+  "import_cloud_sequencer:import"
   "import_sheet_recipe:import"
   "process_attached_csv:bulk"
   "restart_bulk_job:bulk"
@@ -112,7 +114,7 @@ case "$group" in
   run)
     reason="LeadMagic ${name} starts a paid run. Confirm the max credits in the run_sheet_column preview before approving." ;;
   import)
-    reason="LeadMagic ${name} imports a sheet recipe (columns and settings) into your LeadMagic workspace. Review the recipe before approving." ;;
+    reason="LeadMagic ${name} imports data into your LeadMagic workspace. Review the source and row limit before approving." ;;
   delete)
     reason="LeadMagic ${name} deletes rows or columns in your LeadMagic workspace. Confirm the ids before approving." ;;
   *)
