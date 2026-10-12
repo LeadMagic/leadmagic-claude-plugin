@@ -1,6 +1,6 @@
 ---
 name: ads-research
-description: Pull competitor ad creatives (Google, Meta, B2B) via LeadMagic MCP for messaging and competitive angles.
+description: Pull competitor ad creatives from Google, Meta, and B2B ad libraries via LeadMagic MCP. Use when the user wants a company's recent ads, creatives, CTAs, or competitive messaging angles.
 ---
 
 # Ads research

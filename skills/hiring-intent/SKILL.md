@@ -1,6 +1,6 @@
 ---
 name: hiring-intent
-description: Surface open roles and hiring velocity for prioritization using LeadMagic MCP jobs and hiring-signal tools.
+description: Surface open roles and hiring velocity with LeadMagic MCP jobs and hiring-signal tools. Use when the user asks who is hiring, what roles a company has open, or whether accounts are ramping headcount.
 ---
 
 # Hiring intent
