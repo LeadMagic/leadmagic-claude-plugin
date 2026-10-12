@@ -13,7 +13,7 @@ Aligns the plugin with the tools the hosted MCP serves today, and adds Sheets, o
 - New commands: `enrich-sheet`, `build-list`, `tam-map`, `lookalikes`, `job-change-sweep`, `competitor-ads`, `waterfall-email`, `usage-report`, `decision-makers`, and `hiring-signals`. List workflows hand more than 5 rows to a sheet or bulk job.
 - Every skill description now says what it does and when to use it. Both agents carry the core spend rules inline; `leadmagic-gtm` gains a Sheets clause.
 - The README approval table lists only tools this plugin exposes, adding `find_local_leads`, `import_sheet_recipe`, and `set_sheet_column_auto_run`. The README now states plainly what the hook auto-approves and what it asks for, that it honors `permission_mode`, the `LEADMAGIC_ASK_ALL=1` opt-out, and that the plugin connects only to `https://mcp.leadmagic.io/mcp` over OAuth. The hook's own list is unchanged; it mirrors the server's approval gate.
-- The tool count reads 80+ instead of 130+. The redundant `hooks` field is removed from `plugin.json` (`hooks/hooks.json` loads automatically).
+- The tool count reads 75+ instead of 130+. The redundant `hooks` field is removed from `plugin.json` (`hooks/hooks.json` loads automatically).
 
 The bundled MCP server now points at `https://mcp.leadmagic.io/mcp`, the canonical URL for every client. The bare origin keeps working, so existing installs need no change.
 

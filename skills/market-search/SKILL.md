@@ -14,7 +14,7 @@ Use when the user wants a whole segment — an audience, a TAM, an account list,
 
 - **On qualifying plans, browse search is credit-free**, within two limits:
   - **Rate limit**, set by the plan.
-  - **Fair-use cap**: about 10M records a month — **13,333 searches a day** at 25-row pages, or your contract's limit if lower. People, company, and jobs searches share one cap per workspace.
+  - **Fair-use cap**: about 10M records a month — **13,333 searches a day** at 25-row pages, or your contract's limit if lower. The cap is per account, shared across people, company, and jobs search.
 - **On other plans**, browse search is metered by results returned.
 - **Always metered, on every plan**: lookalikes (`find_lookalike_companies`), full search, exports, and contact unlocks (emails, phones).
 
