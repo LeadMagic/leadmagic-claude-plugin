@@ -1,6 +1,6 @@
 ---
 description: Find the buyers at a target account and optionally their work emails
-argument-hint: [company domain] [optional: titles you sell to]
+argument-hint: "[company domain] [optional: titles you sell to]"
 ---
 
 Find decision-makers at: $ARGUMENTS

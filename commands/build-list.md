@@ -1,6 +1,6 @@
 ---
 description: Build an ICP prospect list with LeadMagic people or company search
-argument-hint: [ICP, e.g. "VP Sales at 51-200 employee US software companies"]
+argument-hint: "[ICP, e.g. 'VP Sales at 51-200 employee US software companies']"
 ---
 
 Build a prospect list for: $ARGUMENTS

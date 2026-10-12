@@ -1,6 +1,6 @@
 ---
 description: LeadMagic credit and usage report from free account analytics
-argument-hint: [optional period, e.g. "this week"]
+argument-hint: "[optional period, e.g. 'this week']"
 ---
 
 Build a LeadMagic usage report for: $ARGUMENTS (default: this week).

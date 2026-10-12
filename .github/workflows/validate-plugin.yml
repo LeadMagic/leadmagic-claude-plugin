@@ -113,6 +113,30 @@ jobs:
           test "$count" -ge 10
           echo "ok    ask-list entries: $count"
 
+      - name: Parse skill, command, and agent frontmatter as strict YAML
+        run: |
+          set -euo pipefail
+          python3 -m pip install --quiet --disable-pip-version-check pyyaml==6.0.2
+          python3 - <<'PY'
+          import glob, re, sys, yaml
+          bad = []
+          files = glob.glob("skills/*/SKILL.md") + glob.glob("commands/*.md") + glob.glob("agents/*.md")
+          for f in sorted(files):
+              m = re.match(r"^---\n(.*?)\n---\n", open(f, encoding="utf-8").read(), re.S)
+              if not m:
+                  bad.append(f"{f}: missing frontmatter"); continue
+              try:
+                  d = yaml.safe_load(m.group(1))
+              except yaml.YAMLError as e:
+                  bad.append(f"{f}: {e}"); continue
+              for k, v in d.items():
+                  if k != "tools" and not isinstance(v, (str, bool, int)):
+                      bad.append(f"{f}: {k} must be a single value, got {v!r}")
+          if bad:
+              print("\n".join(bad)); sys.exit(1)
+          print(f"ok    frontmatter: {len(files)} files")
+          PY
+
       - name: Check relative Markdown links
         run: |
           set -euo pipefail

@@ -1,6 +1,6 @@
 ---
 description: Research a company with LeadMagic account intel
-argument-hint: [company domain, e.g. acme.com]
+argument-hint: "[company domain, e.g. acme.com]"
 ---
 
 Research this company with LeadMagic MCP: $ARGUMENTS (prefer the domain).

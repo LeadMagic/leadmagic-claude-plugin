@@ -1,6 +1,6 @@
 ---
 description: Rank target accounts by hiring activity with LeadMagic jobs search
-argument-hint: [company domains] [optional: roles and time window]
+argument-hint: "[company domains] [optional: roles and time window]"
 ---
 
 Research hiring activity for: $ARGUMENTS
