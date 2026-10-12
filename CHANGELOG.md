@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.2 — 2026-10-12
+
+- Directory listing: icon, documentation, support, and terms of service links.
+
 ## 0.3.1 — 2026-10-12
 
 - Command argument hints are valid YAML.
