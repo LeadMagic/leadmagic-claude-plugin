@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# PreToolUse approval policy for LeadMagic MCP tools (mcp__plugin_leadmagic_leadmagic__*
-# from this plugin, mcp__leadmagic__* when the server was added by hand).
+# PreToolUse approval policy for this plugin's LeadMagic MCP tools
+# (mcp__plugin_leadmagic_leadmagic__*).
 #
 # Auto-approves every LeadMagic tool except ASK_BEFORE_TOOLS, which still prompt
 # because they queue paid jobs, start paid runs, move data in or out of connected
