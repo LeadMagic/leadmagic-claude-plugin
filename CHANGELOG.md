@@ -1,12 +1,12 @@
 # Changelog
 
-## Unreleased
+## 0.3.0 — 2026-10-12
 
-The bundled MCP server now points at `https://mcp.leadmagic.io/mcp`, the canonical URL for every client. The bare origin keeps working, so existing installs need no change.
-
-When the session `permission_mode` is `bypassPermissions`, `auto`, or `dontAsk`, the approval hook allows paid and destructive LeadMagic tools instead of forcing an extra prompt. Default, accept-edits, and plan mode still ask. Plugin CI covers both cases.
-
-Plugin CI smoke-tests the approval hook for both plugin-scoped (`mcp__plugin_leadmagic_leadmagic__*`) and hand-added (`mcp__leadmagic__*`) tool names, including preview-vs-token asks and the silent cases.
+- New `sheets` and `outbound-recipes` skills.
+- New commands: `enrich-sheet`, `build-list`, `tam-map`, `lookalikes`, `job-change-sweep`, `waterfall-email`, `usage-report`, `find-buyers`, and `hiring-signals`.
+- `bulk-enrichment`, `contact-lookup`, `account-research`, and `market-search` updated for the current tool set.
+- Skill descriptions now say when to use each skill.
+- README documents what the approval hook allows and asks for.
 
 ## 0.2.2 — 2026-10-01
 

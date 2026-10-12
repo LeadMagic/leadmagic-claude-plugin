@@ -1,6 +1,6 @@
 ---
 name: hiring-intent
-description: Surface open roles and hiring velocity for prioritization using LeadMagic MCP jobs and hiring-signal tools.
+description: Surface open roles and hiring velocity with LeadMagic MCP jobs and hiring-signal tools. Use when the user asks who is hiring, what roles a company has open, or whether accounts are ramping headcount.
 ---
 
 # Hiring intent
@@ -10,7 +10,7 @@ Use when the user asks who is hiring, what roles are open, or whether a company 
 
 ## Workflow
 1. Company-scoped open roles → `find_jobs`.
-2. Broader Jobs Data search → `search_jobs` (use free `resolve_job_search_filters` / `get_job_search_catalogs` when filters are unclear).
+2. Broader Jobs Data search → `search_jobs`, using its own filters (`titles`, `company_domains` up to 25, `countries`, `seniority`, `posted_within`, `tags`, `has_remote`). One call with `company_domains` covers several accounts — do not loop one call per domain.
 3. Aggregated velocity → `get_company_hiring_signals` (not a job list).
 4. Prefer domain identifiers; keep results factual from tools only.
 

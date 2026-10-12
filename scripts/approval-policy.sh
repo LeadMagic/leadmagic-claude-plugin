@@ -14,12 +14,13 @@
 # LeadMagic's plugin policy tests and mirrored by the Claude Code
 # permissions snippet on app.leadmagic.io (Settings -> API -> AI tooling). One
 # "tool:group" entry per line, double-quoted, sorted. Groups: bulk | run | import |
-# push | delete.
+# delete | edit.
 #
 # Bash 3.2 compatible (macOS /bin/bash): no associative arrays, no lowercasing.
 set -euo pipefail
 
 ASK_BEFORE_TOOLS=(
+  "cancel_sheet_run:edit"
   "create_bulk_upload_session:bulk"
   "delete_sheet_column:delete"
   "delete_sheet_rows:delete"
@@ -28,20 +29,13 @@ ASK_BEFORE_TOOLS=(
   "import_cloud_sequencer:import"
   "import_sheet_recipe:import"
   "process_attached_csv:bulk"
-  "publish_cloud_workflow:run"
-  "push_cloud_rows:push"
-  "remove_prospect_list_members:delete"
   "restart_bulk_job:bulk"
   "resume_bulk_job:run"
-  "resume_cloud_run:run"
-  "run_cloud_workflow:run"
   "run_sheet_column:run"
-  "save_sheet_http_request:push"
+  "set_sheet_cells:edit"
   "set_sheet_column_auto_run:run"
   "submit_bulk_job:bulk"
   "submit_detected_bulk_job:bulk"
-  "test_sheet_http_request:push"
-  "update_sheet_http_request:push"
 )
 
 # Always drain stdin first, even when we decide to say nothing.
@@ -104,10 +98,10 @@ fi
 
 # The hosted server runs these tools only when the call carries the
 # confirmation_token its first, preview-only call returned. So the preview runs
-# unprompted and the person is asked once, on the call that would act. The two
-# widget openers carry no token and always ask.
+# unprompted and the person is asked once, on the call that would act. The
+# widget openers, cell edits, and sheet cancellations carry no token and ask.
 case "$name" in
-  create_bulk_upload_session|process_attached_csv) ;;
+  create_bulk_upload_session|process_attached_csv|set_sheet_cells|cancel_sheet_run) ;;
   *)
     token_pattern='"confirmation_token"[[:space:]]*:[[:space:]]*"'
     if [[ ! "$input" =~ $token_pattern ]]; then
@@ -120,13 +114,13 @@ case "$group" in
   bulk)
     reason="LeadMagic ${name} queues a paid bulk job that bills every row. Check preview_cost and check_credit_balance, confirm the row count, then approve." ;;
   run)
-    reason="LeadMagic ${name} starts a paid run. Confirm the previewed max credits (run_sheet_column preview or quote_cloud_workflow) before approving." ;;
+    reason="LeadMagic ${name} starts a paid run. Confirm the max credits in the run_sheet_column preview before approving." ;;
   import)
-    reason="LeadMagic ${name} imports records from a connected CRM or sequencer into a LeadMagic sheet. Check platform, object and maxRows before approving." ;;
-  push)
-    reason="LeadMagic ${name} writes sheet rows out to a connected CRM or sequencer. Review the selected rows and destination before approving." ;;
+    reason="LeadMagic ${name} imports data into your LeadMagic workspace. Review the source and row limit before approving." ;;
+  edit)
+    reason="LeadMagic ${name} changes an existing sheet (cell values or a running fill). Confirm the target before approving." ;;
   delete)
-    reason="LeadMagic ${name} deletes rows or list members in your LeadMagic workspace. Confirm the ids before approving." ;;
+    reason="LeadMagic ${name} deletes rows or columns in your LeadMagic workspace. Confirm the ids before approving." ;;
   *)
     reason="LeadMagic ${name} needs explicit approval under the LeadMagic plugin policy." ;;
 esac

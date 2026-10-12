@@ -1,8 +1,8 @@
 {
 	"name": "leadmagic",
 	"displayName": "LeadMagic",
-	"version": "0.2.2",
-	"description": "Official LeadMagic GTM plugin for Claude Code. Connects to hosted MCP (130+ tools) for B2B account research, work email discovery and validation, decision-maker search, hiring intent, ads research, bulk enrichment, and credit-aware workflows.",
+	"version": "0.3.0",
+	"description": "Official LeadMagic GTM plugin for Claude Code. Connects to hosted MCP (60+ tools) for B2B account research, work email discovery and validation, decision-maker search, hiring intent, LeadMagic Sheets, bulk enrichment, and credit-aware workflows.",
 	"author": {
 		"name": "LeadMagic",
 		"email": "plugins@leadmagic.io",
@@ -24,12 +24,23 @@
 		"bulk-enrichment"
 	],
 	"skills": "./skills/",
-	"agents": ["./agents/leadmagic-gtm.md", "./agents/leadmagic-bulk.md"],
-	"hooks": "./hooks/hooks.json",
+	"agents": [
+		"./agents/leadmagic-gtm.md",
+		"./agents/leadmagic-bulk.md"
+	],
 	"mcpServers": "./.mcp.json",
 	"commands": [
+		"./commands/build-list.md",
 		"./commands/check-credits.md",
+		"./commands/find-buyers.md",
+		"./commands/enrich-sheet.md",
+		"./commands/hiring-signals.md",
+		"./commands/job-change-sweep.md",
+		"./commands/lookalikes.md",
 		"./commands/research-company.md",
-		"./commands/validate-email.md"
+		"./commands/tam-map.md",
+		"./commands/usage-report.md",
+		"./commands/validate-email.md",
+		"./commands/waterfall-email.md"
 	]
 }

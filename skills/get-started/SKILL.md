@@ -11,7 +11,7 @@ Use when the user is connecting LeadMagic for the first time, asks how to begin,
 ## Workflow
 1. Call free `check_credit_balance` and summarize remaining credits.
 2. Pick **one** outcome the user cares about:
-   - Company → prefer `account_intel` (fallback `research_account`) with `company_domain` when possible.
+   - Company → `account_intel` with `company_domain` when possible (call free `preview_cost` first), or `enrich_company` for firmographics only.
    - Contact → `validate_work_email` if they have an email; otherwise `find_work_email` or `enrich_contact`.
 3. Before any multi-row or bulk work, call free `preview_cost` and confirm.
 4. Never invent emails, funding, or firmographics — only report tool results.
@@ -20,4 +20,4 @@ Use when the user is connecting LeadMagic for the first time, asks how to begin,
 - Credits remaining
 - One concrete result (account brief or contact outcome)
 - Exact tools used
-- Suggested next step (decision-makers, hiring, ads, or bulk CSV)
+- Suggested next step (decision-makers, hiring, or bulk CSV)
