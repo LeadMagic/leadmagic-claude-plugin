@@ -33,7 +33,7 @@ claude --plugin-dir /path/to/leadmagic-claude-plugin
 /plugin install leadmagic@leadmagic-plugins
 ```
 
-Or submit/install via the [Claude plugin directory](https://claude.com/docs/plugins/submit).
+Or install it from the [Claude directory](https://claude.ai/directory).
 
 ## Connect
 
@@ -97,8 +97,6 @@ Claude Code normally asks before every MCP tool call. Left alone, a long LeadMag
 | Paid runs | `run_sheet_column`, `resume_bulk_job`, `set_sheet_column_auto_run` |
 | Recipe import | `import_sheet_recipe` |
 | Deletes | `delete_sheet_rows`, `delete_sheet_column` |
-
-The hook's internal list also names a few other server-gated tool names. It mirrors the server's own approval gate, and this plugin does not currently expose those tools.
 
 **How the two-step approval works:**
 

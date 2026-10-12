@@ -14,7 +14,7 @@
 # LeadMagic's plugin policy tests and mirrored by the Claude Code
 # permissions snippet on app.leadmagic.io (Settings -> API -> AI tooling). One
 # "tool:group" entry per line, double-quoted, sorted. Groups: bulk | run | import |
-# push | delete.
+# delete.
 #
 # Bash 3.2 compatible (macOS /bin/bash): no associative arrays, no lowercasing.
 set -euo pipefail
@@ -24,24 +24,14 @@ ASK_BEFORE_TOOLS=(
   "delete_sheet_column:delete"
   "delete_sheet_rows:delete"
   "find_local_leads:bulk"
-  "import_cloud_crm:import"
-  "import_cloud_sequencer:import"
   "import_sheet_recipe:import"
   "process_attached_csv:bulk"
-  "publish_cloud_workflow:run"
-  "push_cloud_rows:push"
-  "remove_prospect_list_members:delete"
   "restart_bulk_job:bulk"
   "resume_bulk_job:run"
-  "resume_cloud_run:run"
-  "run_cloud_workflow:run"
   "run_sheet_column:run"
-  "save_sheet_http_request:push"
   "set_sheet_column_auto_run:run"
   "submit_bulk_job:bulk"
   "submit_detected_bulk_job:bulk"
-  "test_sheet_http_request:push"
-  "update_sheet_http_request:push"
 )
 
 # Always drain stdin first, even when we decide to say nothing.
@@ -122,11 +112,9 @@ case "$group" in
   run)
     reason="LeadMagic ${name} starts a paid run. Confirm the max credits in the run_sheet_column preview before approving." ;;
   import)
-    reason="LeadMagic ${name} imports records from a connected CRM or sequencer into a LeadMagic sheet. Check platform, object and maxRows before approving." ;;
-  push)
-    reason="LeadMagic ${name} writes sheet rows out to a connected CRM or sequencer. Review the selected rows and destination before approving." ;;
+    reason="LeadMagic ${name} imports a sheet recipe (columns and settings) into your LeadMagic workspace. Review the recipe before approving." ;;
   delete)
-    reason="LeadMagic ${name} deletes rows or list members in your LeadMagic workspace. Confirm the ids before approving." ;;
+    reason="LeadMagic ${name} deletes rows or columns in your LeadMagic workspace. Confirm the ids before approving." ;;
   *)
     reason="LeadMagic ${name} needs explicit approval under the LeadMagic plugin policy." ;;
 esac

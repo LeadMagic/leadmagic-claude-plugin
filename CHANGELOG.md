@@ -2,24 +2,11 @@
 
 ## 0.3.0 — 2026-10-12
 
-Aligns the plugin with the tools the hosted MCP serves today, and adds Sheets, outbound recipes, and ten workflow commands.
-
-- `research_account` is replaced by `account_intel` (and `enrich_company` for firmographics only) in `/leadmagic:research-company`, `account-research`, and `get-started`. References to job-search catalog and filter helpers are gone; `search_jobs` filters cover them.
-- `market-search` is rewritten. Browse search (people, company, jobs) is credit-free only on qualifying plans, within the plan's rate limit and a fair-use cap of about 10M records a month (13,333 searches a day at 25-row pages, or the contract's limit if lower). Lookalikes, full search, exports, and contact unlocks stay metered. Page sizes now match the server: 25 rows on the credit-free lane. Plan details link to [pricing](https://leadmagic.io/pricing) instead of hardcoded numbers.
-- New `sheets` skill: read the sheet card first, add columns in one call, one `run_sheet_column` per pipeline, the confirmation-token flow, the 10,000 row-id selection cap, and soft-delete undo. It covers enrichment and AI columns; custom HTTP columns are set up in the LeadMagic app.
-- New `outbound-recipes` skill: MCP-only recipes with the fair-use cap stated and no plan prices.
-- `bulk-enrichment` adds `watch_bulk_job_progress`, `export_bulk_job` (CSV up to 4 MB), pause / resume / restart, `get_bulk_job_errors`, and `find_local_leads` (200 credits per keyword × location, charged up front after confirmation).
-- `contact-lookup` and `account-research` add `search_profile`, `email_to_b2b_profile`, `enrich_company`, and `find_company_funding`.
-- New commands: `enrich-sheet`, `build-list`, `tam-map`, `lookalikes`, `job-change-sweep`, `waterfall-email`, `usage-report`, `find-buyers`, and `hiring-signals`. List workflows hand more than 5 rows to a sheet or bulk job.
-- Every skill description now says what it does and when to use it. Both agents carry the core spend rules inline; `leadmagic-gtm` gains a Sheets clause.
-- The README approval table lists only tools this plugin exposes, adding `find_local_leads`, `import_sheet_recipe`, and `set_sheet_column_auto_run`. The README now states plainly what the hook auto-approves and what it asks for, that it honors `permission_mode`, the `LEADMAGIC_ASK_ALL=1` opt-out, and that the plugin connects only to `https://mcp.leadmagic.io/mcp` over OAuth. The hook's own list is unchanged; it mirrors the server's approval gate.
-- The tool count reads 70+ instead of 130+. The redundant `hooks` field is removed from `plugin.json` (`hooks/hooks.json` loads automatically).
-
-The bundled MCP server now points at `https://mcp.leadmagic.io/mcp`, the canonical URL for every client. The bare origin keeps working, so existing installs need no change.
-
-When the session `permission_mode` is `bypassPermissions`, `auto`, or `dontAsk`, the approval hook allows paid and destructive LeadMagic tools instead of forcing an extra prompt. Default, accept-edits, and plan mode still ask. Plugin CI covers both cases.
-
-Plugin CI smoke-tests the approval hook for both plugin-scoped (`mcp__plugin_leadmagic_leadmagic__*`) and hand-added (`mcp__leadmagic__*`) tool names, including preview-vs-token asks and the silent cases.
+- New `sheets` and `outbound-recipes` skills.
+- New commands: `enrich-sheet`, `build-list`, `tam-map`, `lookalikes`, `job-change-sweep`, `waterfall-email`, `usage-report`, `find-buyers`, and `hiring-signals`.
+- `bulk-enrichment`, `contact-lookup`, `account-research`, and `market-search` updated for the current tool set.
+- Skill descriptions now say when to use each skill.
+- README documents what the approval hook allows and asks for.
 
 ## 0.2.2 — 2026-10-01
 
