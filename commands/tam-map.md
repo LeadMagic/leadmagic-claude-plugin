@@ -1,6 +1,6 @@
 ---
 description: Size and segment a market with LeadMagic company search before pulling full lists
-argument-hint: [market, e.g. "US fintechs, 11-500 employees"]
+argument-hint: "[market, e.g. 'US fintechs, 11-500 employees']"
 ---
 
 Map the TAM for: $ARGUMENTS

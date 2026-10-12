@@ -1,6 +1,6 @@
 ---
 description: Cheapest-first email waterfall for one contact — stop at the first hit
-argument-hint: [name + company, an email, or a profile URL]
+argument-hint: "[name + company, an email, or a profile URL]"
 ---
 
 Find a reachable email for: $ARGUMENTS

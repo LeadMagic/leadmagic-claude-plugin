@@ -1,6 +1,6 @@
 ---
 description: Find contacts who changed jobs — champion tracking with LeadMagic job-change detection
-argument-hint: [contacts: profile URLs or work emails, or a CSV path]
+argument-hint: "[contacts: profile URLs or work emails, or a CSV path]"
 ---
 
 Run a job-change sweep over: $ARGUMENTS

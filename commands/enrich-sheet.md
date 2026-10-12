@@ -1,6 +1,6 @@
 ---
 description: Build and run enrichment and AI columns in a LeadMagic sheet (credit-safe)
-argument-hint: [sheet name, or "new"] [goal, e.g. "find work emails"]
+argument-hint: "[sheet name, or 'new'] [goal, e.g. 'find work emails']"
 ---
 
 Work in a LeadMagic sheet: $ARGUMENTS

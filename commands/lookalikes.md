@@ -1,6 +1,6 @@
 ---
 description: Expand a target-account list from seed customers with LeadMagic lookalike search
-argument-hint: [seed company domains]
+argument-hint: "[seed company domains]"
 ---
 
 Find lookalike companies for: $ARGUMENTS
