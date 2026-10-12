@@ -9,6 +9,7 @@
 		"url": "https://leadmagic.io"
 	},
 	"homepage": "https://leadmagic.io/docs/mcp/introduction",
+	"privacyPolicyUrl": "https://leadmagic.io/legal/privacy",
 	"repository": "https://github.com/LeadMagic/leadmagic-claude-plugin",
 	"license": "MIT",
 	"keywords": [

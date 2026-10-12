@@ -2,7 +2,7 @@
 	"hooks": {
 		"PreToolUse": [
 			{
-				"matcher": "mcp__(plugin_leadmagic_)?leadmagic__.*",
+				"matcher": "mcp__plugin_leadmagic_leadmagic__.*",
 				"hooks": [
 					{
 						"type": "command",
