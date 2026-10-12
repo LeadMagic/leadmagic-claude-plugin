@@ -1,7 +1,7 @@
 {
 	"name": "leadmagic",
 	"displayName": "LeadMagic",
-	"version": "0.3.1",
+	"version": "0.3.2",
 	"description": "Official LeadMagic GTM plugin for Claude Code. Connects to hosted MCP (60+ tools) for B2B account research, work email discovery and validation, decision-maker search, hiring intent, LeadMagic Sheets, bulk enrichment, and credit-aware workflows.",
 	"author": {
 		"name": "LeadMagic",
@@ -9,7 +9,11 @@
 		"url": "https://leadmagic.io"
 	},
 	"homepage": "https://leadmagic.io/docs/mcp/introduction",
+	"documentationUrl": "https://leadmagic.io/docs/mcp/introduction",
+	"supportUrl": "https://leadmagic.io/docs/v1/support",
 	"privacyPolicyUrl": "https://leadmagic.io/legal/privacy",
+	"termsOfServiceUrl": "https://leadmagic.io/legal/terms",
+	"icon": "./assets/icon.png",
 	"repository": "https://github.com/LeadMagic/leadmagic-claude-plugin",
 	"license": "MIT",
 	"keywords": [
