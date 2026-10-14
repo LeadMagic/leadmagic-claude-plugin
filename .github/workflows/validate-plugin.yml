@@ -109,9 +109,15 @@ jobs:
           done
           out="$(printf '%s' '{"tool_name":"mcp__plugin_leadmagic_leadmagic__search_people"}' | LEADMAGIC_ASK_ALL=1 bash "$hook")"; [[ -z "$out" ]] || { echo "FAIL: ASK_ALL should be silent"; exit 1; }
           echo "ok    silent cases"
-          count="$(grep -cE '^  "[a-z0-9_]+:(bulk|run|import|delete|edit)"$' "$hook")"
+          count="$(grep -cE '^  "[a-z0-9_]+:(bulk|run|import|push|delete|edit)"$' "$hook")"
           test "$count" -ge 10
           echo "ok    ask-list entries: $count"
+
+      - name: Check public files
+        run: python3 -B scripts/check-public-files.py
+
+      - name: Approval policy regression tests
+        run: python3 -B -m unittest discover -s tests -v
 
       - name: Parse skill, command, and agent frontmatter as strict YAML
         run: |

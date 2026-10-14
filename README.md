@@ -2,7 +2,7 @@
 
 <img src="https://raw.githubusercontent.com/LeadMagic/leadmagic-claude-plugin/main/assets/logo.svg" width="64" height="64" alt="LeadMagic logo">
 
-Official LeadMagic plugin for [Claude Code](https://code.claude.com): skills, agents, an approval-policy hook, and the hosted MCP connector (60+ tools; Sheets tools appear only when your workspace has Sheets) at `https://mcp.leadmagic.io/mcp`.
+Official LeadMagic plugin for [Claude Code](https://code.claude.com): skills, agents, an approval-policy hook, and the hosted MCP connector (available tools depend on your workspace; Sheets tools appear when your workspace has Sheets) at `https://mcp.leadmagic.io/mcp`.
 
 [LeadMagic B2B enrichment](https://leadmagic.io?utm_source=github&utm_medium=readme&utm_campaign=leadmagic-claude-plugin&utm_content=readme-intro) · [MCP setup guide](https://leadmagic.io/docs/mcp/setup?utm_source=github&utm_medium=readme&utm_campaign=leadmagic-claude-plugin&utm_content=readme-intro) · [Pricing and credits](https://leadmagic.io/pricing?utm_source=github&utm_medium=readme&utm_campaign=leadmagic-claude-plugin&utm_content=readme-intro)
 
@@ -35,7 +35,7 @@ claude --plugin-dir /path/to/leadmagic-claude-plugin
 
 The GitHub marketplace install uses the remote source revision held by Claude Code's marketplace cache; it does not mirror a local checkout. A local checkout may contain newer, uncommitted, or branch-only changes. To test the exact files in a checkout, use `claude --plugin-dir /path/to/leadmagic-claude-plugin` instead.
 
-Or install it from the [Claude directory](https://claude.ai/directory).
+Directory availability depends on approval of the listing. Use the GitHub installation above until LeadMagic appears in the [Claude directory](https://claude.ai/directory).
 
 ## Connect
 
@@ -43,7 +43,7 @@ Or install it from the [Claude directory](https://claude.ai/directory).
 2. Complete OAuth sign-in in the browser.
 3. Try: *Check my LeadMagic credit balance.*
 
-The bundled connection uses OAuth; no REST API key is required.
+The bundled connection uses OAuth; no REST API key is required. The optional approval hook requires Bash and `jq`. If `jq` is unavailable, Claude Code uses its normal permission prompts; install `jq` to enable the hook.
 
 ## Skills
 
@@ -88,7 +88,7 @@ Claude Code normally asks before every MCP tool call. Left alone, a long LeadMag
 
 **What the hook auto-approves (no prompt):**
 
-- **Read and single-record tools**: lookups, searches, validation, composites like `account_intel`, sheet reads, and cell edits.
+- **Read and single-record tools**: lookups, searches, validation, composites like `account_intel`, and sheet reads.
 - Some of these spend a credit or two per call. The `credit-guard` skill has the model call the free `preview_cost` before anything larger.
 
 **What still asks, with a reason naming the tool and what to check:**
@@ -101,19 +101,23 @@ Claude Code normally asks before every MCP tool call. Left alone, a long LeadMag
 | Cell edits and stopping a sheet run | `set_sheet_cells`, `cancel_sheet_run` |
 | Deletes | `delete_sheet_rows`, `delete_sheet_column` |
 
+The hook also guards tools from older server versions that are unavailable on the current hosted connector, so existing installs keep their approval protection during deployment.
+
 **How the two-step approval works:**
 
-- These tools act in two steps on the server. The first call only returns a preview and a `confirmation_token`.
+- The guarded bulk jobs, large runs, imports and deletes act in two steps on the server. The first call only returns a preview and a `confirmation_token`.
 - Nothing runs until a second call carries that token.
 - The hook lets the preview through and asks you once, on the call that would act.
-- The two upload-widget openers (`create_bulk_upload_session`, `process_attached_csv`) always ask in the default permission mode.
+- The upload-widget openers, `set_sheet_cells`, and `cancel_sheet_run` ask before the first call in the default permission modes.
 
 **Permission modes:**
 
 - If your session already skips approval prompts (`permission_mode` of `bypassPermissions`, `auto`, or `dontAsk`), the hook allows those tools instead of returning `ask`. A hook `ask` would otherwise force a prompt even in auto mode.
 - `default`, `acceptEdits`, and `plan` modes still ask.
 
-**Always allowed:** `pause_*` and bulk-job cancellations run without asking, because they stop spend rather than start it. `cancel_sheet_run` asks because it changes an existing sheet run.
+Tools added by a newer server that match an acting prefix ask immediately until the plugin knows their preview contract.
+
+**Stopping:** `pause_*` and bulk cancellations run without asking. `cancel_sheet_run` asks because it changes an existing sheet run.
 
 **Your own rules win:** your `permissions.deny` and `permissions.ask` rules still take precedence over the hook.
 

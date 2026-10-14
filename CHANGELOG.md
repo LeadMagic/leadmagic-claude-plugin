@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.3.5 — 2026-10-13
+
+- Validate approval-hook JSON fields and preserve normal permissions for invalid input or a missing `jq` installation.
+- Cover both bundled and hand-added MCP tool names, and require approval for new acting tools until their preview contract is known.
+- Keep default-mode approval for cell edits, sheet cancellation, and upload widgets; preserve the session's selected automatic permission mode.
+- Check public files in CI and document the standalone public policy ownership.
+
 ## 0.3.4 — 2026-10-12
 
 - Contact lookup reports the exact `valid`, `invalid`, or `unknown` email status; catch-all/unknown is never treated as deliverable, and the waterfall proceeds only until a valid result.
@@ -27,7 +34,8 @@
 - New commands: `enrich-sheet`, `build-list`, `tam-map`, `lookalikes`, `job-change-sweep`, `waterfall-email`, `usage-report`, `find-buyers`, and `hiring-signals`.
 - `bulk-enrichment`, `contact-lookup`, `account-research`, and `market-search` updated for the current tool set.
 - Skill descriptions now say when to use each skill.
-- README documents what the approval hook allows and asks for.
+- README documents what the approval hook allows and asks for. Cell edits and cancelling sheet runs ask immediately in the default permission modes; automatic modes retain their selected behavior.
+- Bulk examples use the public `submit_detected_bulk_job` tool.
 
 ## 0.2.2 — 2026-10-01
 
@@ -44,7 +52,6 @@ Approval policy hook. Read and single-record LeadMagic tools now run without a p
 ## Public-content privacy review — 2026-09-06
 
 Use synthetic contact examples, remove unnecessary identity and credential-like samples, and clarify publication, attribution, and claims requirements.
-
 
 ## Unreleased — 2026-09-06
 
