@@ -1,21 +1,21 @@
 {
 	"name": "leadmagic-plugins",
 	"owner": {
-		"name": "LeadMagic",
+		"name": "LeadMagic Corporation",
 		"email": "support@leadmagic.io"
 	},
 	"metadata": {
 		"description": "LeadMagic official Claude Code plugins for B2B enrichment and GTM workflows.",
-		"version": "0.3.5"
+		"version": "0.3.6"
 	},
 	"plugins": [
 		{
 			"name": "leadmagic",
 			"source": "./",
 			"description": "Official LeadMagic GTM plugin \u2014 hosted MCP, skills, agents, and credit-safe bulk workflows.",
-			"version": "0.3.5",
+			"version": "0.3.6",
 			"author": {
-				"name": "LeadMagic",
+				"name": "LeadMagic Corporation",
 				"email": "support@leadmagic.io"
 			},
 			"homepage": "https://leadmagic.io/docs/mcp/introduction",
