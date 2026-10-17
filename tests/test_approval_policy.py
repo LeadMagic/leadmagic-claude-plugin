@@ -114,10 +114,50 @@ class ApprovalPolicyTest(unittest.TestCase):
         for name in ("mcp__other__search_people", "mcp__leadmagic__search_people-extra", "Bash"):
             self.assertIsNone(re.fullmatch(matcher, name))
 
-    def test_reads_and_pauses_still_run_without_a_prompt(self):
-        for name in ("check_credit_balance", "read_sheet_rows", "pause_sheet_run", "pause_bulk_job"):
+    def test_reads_previews_and_single_record_lookups_run_without_a_prompt(self):
+        for name in READ_OR_LOOKUP_TOOLS:
             with self.subTest(name=name):
                 self.assertEqual(self.decision(name), "allow")
+                self.assertEqual(self.decision(name, token="v1.1.sig"), "allow")
+
+    def test_state_changing_tools_without_a_preview_contract_always_ask(self):
+        for prefix in ("mcp__plugin_leadmagic_leadmagic__", "mcp__leadmagic__"):
+            for name in MUTATING_TOOLS:
+                with self.subTest(name=name, prefix=prefix):
+                    for mode in ("default", "acceptEdits", "plan"):
+                        self.assertEqual(self.decision(name, mode=mode, prefix=prefix), "ask")
+                        self.assertEqual(self.decision(name, mode=mode, token="v1.1.sig", prefix=prefix), "ask")
+                    for mode in ("auto", "dontAsk", "bypassPermissions"):
+                        self.assertEqual(self.decision(name, mode=mode, prefix=prefix), "allow")
+
+
+READ_OR_LOOKUP_TOOLS = (
+    "account_intel", "b2b_profile_to_work_email", "check_credit_balance", "detect_job_change",
+    "draft_sheet_ai_prompt", "email_to_b2b_profile", "enrich_company", "enrich_contact",
+    "find_company_employees", "find_company_funding", "find_decision_makers", "find_jobs",
+    "find_lookalike_companies", "find_mobile_number", "find_people_by_role", "find_personal_email",
+    "find_work_email", "get_account_analytics", "get_bulk_job_errors", "get_bulk_job_events",
+    "get_bulk_job_logs", "get_bulk_job_rows", "get_bulk_job_status", "get_company_hiring_signals",
+    "get_company_technographics", "get_job_search_catalogs", "get_prospect_list", "get_saved_search",
+    "get_sheet", "get_sheet_run", "get_sheet_stats", "linkedin_profile_to_work_email", "list_bulk_jobs",
+    "list_cloud_campaigns", "list_cloud_connections", "list_cloud_crm_fields", "list_cloud_crm_filters",
+    "list_cloud_crm_objects", "list_cloud_imports", "list_cloud_pushes", "list_cloud_runs",
+    "list_job_countries", "list_prospect_lists", "list_saved_searches", "list_sheet_column_fields",
+    "list_sheet_run_rows", "list_sheet_runs", "list_sheets", "preview_cost", "read_sheet_rows",
+    "research_account", "resolve_job_search_filters", "score_contacts", "search_companies",
+    "search_job_occupation_taxonomy", "search_jobs", "search_people", "search_profile",
+    "validate_work_email", "watch_bulk_job_progress",
+)
+
+MUTATING_TOOLS = (
+    "add_prospect_list_members", "add_sheet_column", "add_sheet_columns", "add_sheet_rows",
+    "cancel_bulk_job", "cancel_cloud_import", "cancel_cloud_run", "configure_sheet_column",
+    "create_prospect_list", "create_sheet", "export_bulk_job", "export_prospect_list",
+    "export_sheet_recipe", "extract_sheet_json_field", "pause_bulk_job", "pause_cloud_run",
+    "pause_sheet_run", "reorder_sheet_columns", "rerun_saved_search", "restore_sheet_column",
+    "set_cloud_workflow_active", "set_new_workspace_option",
+    "restore_sheet_rows", "update_prospect_list", "update_sheet", "update_sheet_column",
+)
 
 
 if __name__ == "__main__":
