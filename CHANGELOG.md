@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.6 — 2026-10-13
+
+- Publish the plugin as LeadMagic Corporation (#24).
+
 ## 0.3.5 — 2026-10-13
 
 - Validate approval-hook JSON fields and preserve normal permissions for invalid input or a missing `jq` installation.
