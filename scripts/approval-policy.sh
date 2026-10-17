@@ -2,9 +2,10 @@
 # PreToolUse approval policy for LeadMagic MCP tools (mcp__plugin_leadmagic_leadmagic__*
 # from this plugin, mcp__leadmagic__* when the server was added by hand).
 #
-# Auto-approves every LeadMagic tool except ASK_BEFORE_TOOLS, which still prompt
-# because they queue paid jobs, start paid runs, move data in or out of connected
-# systems, or delete. Emits no decision at all (Claude Code's normal permission
+# Auto-approves reads, free previews, and paid single-record lookups. Every tool
+# that changes workspace state prompts: ASK_BEFORE_TOOLS (known preview /
+# confirmation_token contract) and any name with a mutating prefix (see the
+# prefix case below). Emits no decision at all (Claude Code's normal permission
 # flow) when stdin cannot be parsed, the tool is not a LeadMagic tool, or
 # LEADMAGIC_ASK_ALL=1 is set.
 #
@@ -13,7 +14,7 @@
 # The policy is also mirrored by the Claude Code permissions
 # snippet on app.leadmagic.io (Settings -> API -> AI tooling). One
 # "tool:group" entry per line, double-quoted, sorted. Groups: bulk | run | import |
-# push | delete | edit.
+# push | delete | edit | export.
 #
 # Bash 3.2 compatible (macOS /bin/bash): no associative arrays, no lowercasing.
 set -euo pipefail
@@ -99,14 +100,19 @@ for entry in "${ASK_BEFORE_TOOLS[@]}"; do
   fi
 done
 
-# Keep new acting tools protected before their preview contract is known.
+# Every other state-changing tool asks on each call: these have no known preview
+# contract, and new tools with these prefixes stay protected by default. Reads
+# (get_, list_, search_, read_, watch_), check_credit_balance, preview_cost,
+# draft_sheet_ai_prompt, and single-record lookups match none of these.
 if [[ -z "$group" ]]; then
   case "$name" in
     import_*) group="import" ;;
     push_*) group="push" ;;
-    publish_*|run_*|resume_*) group="run" ;;
+    publish_*|run_*|resume_*|rerun_*) group="run" ;;
     submit_*|restart_*) group="bulk" ;;
     delete_*|remove_*) group="delete" ;;
+    export_*) group="export" ;;
+    cancel_*|pause_*|update_*|add_*|restore_*|set_*|create_*|configure_*|reorder_*|extract_*) group="edit" ;;
   esac
 fi
 
@@ -115,7 +121,7 @@ emit() {
 }
 
 if [[ -z "$group" ]]; then
-  emit allow "LeadMagic ${name}: read or single-record tool, auto-approved by the LeadMagic plugin. Set LEADMAGIC_ASK_ALL=1 to prompt for every tool."
+  emit allow "LeadMagic ${name}: read, preview, or single-record lookup, auto-approved by the LeadMagic plugin. Set LEADMAGIC_ASK_ALL=1 to prompt for every tool."
   exit 0
 fi
 
@@ -145,7 +151,9 @@ case "$group" in
   delete)
     reason="LeadMagic ${name} deletes rows or list members in your LeadMagic workspace. Confirm the ids before approving." ;;
   edit)
-    reason="LeadMagic ${name} changes existing sheet data or stops an active sheet run. Review the target before approving." ;;
+    reason="LeadMagic ${name} changes sheets, lists, or columns in your LeadMagic workspace, or pauses or stops an active run or import. Review the target before approving." ;;
+  export)
+    reason="LeadMagic ${name} exports workspace data out of LeadMagic. Confirm the source and destination before approving." ;;
   *)
     reason="LeadMagic ${name} needs explicit approval under the LeadMagic plugin policy." ;;
 esac

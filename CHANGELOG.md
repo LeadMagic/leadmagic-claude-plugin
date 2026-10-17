@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.7 — 2026-10-17
+
+- Ask before workspace mutations and exports, including automation toggles, sheet configuration, row additions, pauses, cancellations, and restores.
+- Keep known preview calls and reads automatic, and honor the session's selected automatic permission mode.
+- Align the hook with the public LeadMagic skills policy and cover both bundled and hand-added MCP tool names.
+
 ## 0.3.6 — 2026-10-13
 
 - Publish the plugin as LeadMagic Corporation (#24).

@@ -90,7 +90,7 @@ Claude Code normally asks before every MCP tool call. Left alone, a long LeadMag
 
 **What the hook auto-approves (no prompt):**
 
-- **Read and single-record tools**: lookups, searches, validation, composites like `account_intel`, and sheet reads.
+- **Reads, previews, and single-record tools**: lookups, searches, validation, composites like `account_intel`, and sheet reads.
 - Some of these spend a credit or two per call. The `credit-guard` skill has the model call the free `preview_cost` before anything larger.
 
 **What still asks, with a reason naming the tool and what to check:**
@@ -100,7 +100,8 @@ Claude Code normally asks before every MCP tool call. Left alone, a long LeadMag
 | Bulk jobs | `submit_detected_bulk_job`, `create_bulk_upload_session`, `process_attached_csv`, `restart_bulk_job`, `find_local_leads` |
 | Paid runs | `run_sheet_column`, `resume_bulk_job`, `set_sheet_column_auto_run` |
 | Imports | `import_sheet_recipe`, `import_cloud_crm`, `import_cloud_sequencer` |
-| Cell edits and stopping a sheet run | `set_sheet_cells`, `cancel_sheet_run` |
+| Workspace changes | Cell edits; adding, updating, configuring, restoring, reordering, and extracting sheet columns or rows; saved lists; automation toggles; pauses and cancellations |
+| Exports | `export_bulk_job`, `export_prospect_list`, `export_sheet_recipe` |
 | Deletes | `delete_sheet_rows`, `delete_sheet_column` |
 
 The hook also guards tools from older server versions that are unavailable on the current hosted connector, so existing installs keep their approval protection during deployment.
@@ -119,7 +120,7 @@ The hook also guards tools from older server versions that are unavailable on th
 
 Tools added by a newer server that match an acting prefix ask immediately until the plugin knows their preview contract.
 
-**Stopping:** `pause_*` and bulk cancellations run without asking. `cancel_sheet_run` asks because it changes an existing sheet run.
+**Workspace changes:** tools without a known preview contract ask on every call, including pauses, cancellations, automation toggles, and exports. This also protects newly added tools with a mutating prefix.
 
 **Your own rules win:** your `permissions.deny` and `permissions.ask` rules still take precedence over the hook.
 
