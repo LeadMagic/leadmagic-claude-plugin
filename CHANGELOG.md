@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.8 — 2026-10-27
+
+- Rename the local approval-presence flag to make its boolean role explicit for directory review. The hook reads presence only and emits permission decisions, never confirmation receipt values.
+
 ## 0.3.7 — 2026-10-17
 
 - Ask before workspace mutations and exports, including automation toggles, sheet configuration, row additions, pauses, cancellations, and restores.

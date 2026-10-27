@@ -66,11 +66,14 @@ parsed="$(printf '%s' "$input" | jq -ers '
      or (has("permission_mode") and (.permission_mode | type) != "string")
      or (has("tool_input") and (.tool_input | type) != "object")
   then error("invalid hook input")
-  else [.tool_name, (.permission_mode // "default" | if . == "" then "default" else . end),
-        ((.tool_input.confirmation_token? | type) == "string")] | @tsv
+  else ((.tool_input.confirmation_token? | type) == "string") as $approval_present |
+       [.tool_name, (.permission_mode // "default" | if . == "" then "default" else . end),
+        $approval_present] | @tsv
   end
 ' 2>/dev/null)" || exit 0
-IFS=$'\t' read -r tool permission_mode has_token <<< "$parsed"
+# approval_present is only a boolean. This hook never extracts, logs, exports,
+# or sends the confirmation receipt itself; it emits a local permission decision.
+IFS=$'\t' read -r tool permission_mode approval_present <<< "$parsed"
 
 # Only decide for well-formed LeadMagic tool names; anything else gets no output.
 # The strict charset also makes $name safe to interpolate into JSON below.
@@ -133,7 +136,7 @@ fi
 case "$name" in
   create_bulk_upload_session|process_attached_csv|set_sheet_cells|cancel_sheet_run) ;;
   *)
-    if [[ "$known_preview" == "true" && "$has_token" != "true" ]]; then
+    if [[ "$known_preview" == "true" && "$approval_present" != "true" ]]; then
       emit allow "LeadMagic ${name}: initial call allowed by the plugin. If the server returns a confirmation_token, approve the follow-up before sending it."
       exit 0
     fi ;;
