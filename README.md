@@ -108,7 +108,7 @@ The hook also guards tools from older server versions that are unavailable on th
 
 **How the two-step approval works:**
 
-- The guarded bulk jobs, large runs, imports and deletes act in two steps on the server. The first call only returns a preview and a `confirmation_token`.
+- The guarded bulk jobs, paid sheet runs, imports and deletes act in two steps on the server. The first call only returns a preview and a `confirmation_token`. Every paid sheet run needs approval, including small samples and AI runs using your saved provider key; only runs the server verifies are free can start immediately.
 - Nothing runs until a second call carries that token.
 - The hook lets the preview through and asks you once, on the call that would act.
 - The upload-widget openers, `set_sheet_cells`, and `cancel_sheet_run` ask before the first call in the default permission modes.
