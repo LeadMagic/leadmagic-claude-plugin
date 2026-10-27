@@ -36,12 +36,11 @@ Always in this order. Use column **keys** (`col_…`) from `get_sheet`, never di
    - `wait_seconds: 45`
    - Columns that read another requested column start after it finishes.
 
-   On a big fill, first add `sample_size: 3`. Show the user the sampled values (`read_sheet_rows` on those rows), then repeat the same call without `sample_size`.
+   On a big fill, first add `sample_size: 3` and follow the approval step below before running the sample. Show the user the sampled values (`read_sheet_rows` on those rows), then request a new quote and approval for the full run without `sample_size`.
 7. **Confirm when the server asks.**
-   - Runs quoted at 5 credits or less start right away. Don't ask before filling a handful of new rows.
-   - Bigger runs come back with `needs_confirmation`, a summary, and a `confirmation_token`. Nothing has run yet.
-   - Show the user the summary. Only after they agree, send the **identical** arguments plus the token.
-   - Never invent a token, and never reuse one for a different summary.
+   - Every paid run, including a small sample or an AI run using the user's saved provider key, first returns `needs_confirmation`, a summary, and a `confirmation_token`. Nothing has run yet. Only runs the server verifies are free can start immediately.
+   - Show the exact sheet, columns, row scope, and maximum credits from the quote. Only after the user explicitly approves that quote, send the **identical** arguments plus the token.
+   - A token, available credits, or approval for another scope is not consent. Never invent a token or reuse one for a changed scope. If the scope changes or the quote expires, obtain a new quote and approval.
 8. **Follow `next_step`.** When a run returns `next_step` plus `next_arguments`, that is the next paid stage of the pipeline. Show its summary, and on approval send `next_arguments` with its token. Don't make separate quote or status calls in between.
 9. **Read results back.** Use `read_sheet_rows` with `columns` (to save tokens) and `filter`.
    - The filter's **root must be a group**: `{"type":"group","join":"and","children":[{"type":"cond","columnKey":"col_…","op":"empty"}]}`
@@ -111,6 +110,7 @@ Custom HTTP (API request) columns are not available through this plugin. Users s
 **Spend and retries:**
 - `confirm_max_credits` is the user's ceiling. The run is refused if the quote is higher.
 - Reuse the same `idempotency_key` when retrying the same submission.
+- After an ambiguous or failed paid call, inspect existing runs, saved results, and credits before retrying. Do not automatically replay work whose outcome is unknown.
 
 **Waiting:** pass `wait_seconds: 45` once (to `run_sheet_column`, `get_sheet_run`, or `list_sheet_runs` with `active: true`) instead of polling.
 
