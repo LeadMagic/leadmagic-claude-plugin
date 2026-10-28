@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.3.10 — 2026-10-27
+
+- Launch the approval hook with the system Bash and enable its strict execution options by name, preserving all permission decisions and failure behavior.
+- Exercise the executable hook entrypoint, including normal permission fallback without `jq`, and verify its execution options cannot be shadowed by a shell function.
+
 ## 0.3.9 — 2026-10-27
 
 - Invoke Bash's strict-mode builtin explicitly, preserving the existing `errexit`, `nounset`, and `pipefail` flags and approval policy.

@@ -45,7 +45,7 @@ Directory availability depends on approval of the listing. Use the GitHub instal
 2. Complete OAuth sign-in in the browser.
 3. Try: *Check my LeadMagic credit balance.*
 
-The bundled connection uses OAuth; no REST API key is required. The optional approval hook requires Bash and `jq`. If `jq` is unavailable, Claude Code uses its normal permission prompts; install `jq` to enable the hook.
+The bundled connection uses OAuth; no REST API key is required. The optional approval hook requires Bash 3.2 or newer at `/bin/bash` and `jq`. If `jq` is unavailable, Claude Code uses its normal permission prompts; install `jq` to enable the hook.
 
 ## Skills
 
