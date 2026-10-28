@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.11 — 2026-10-27
+
+- Clarify the approval-hook opt-out wording in its comment and read-decision explanation; permission decisions and execution options are unchanged.
+
 ## 0.3.10 — 2026-10-27
 
 - Launch the approval hook with the system Bash and enable its strict execution options by name, preserving all permission decisions and failure behavior.
