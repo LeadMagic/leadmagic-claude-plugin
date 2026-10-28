@@ -17,7 +17,7 @@ class ApprovalPolicyTest(unittest.TestCase):
         if env:
             hook_env.update(env)
         return subprocess.check_output(
-            ["/bin/bash", str(HOOK)], input=payload, text=True, env=hook_env
+            [str(HOOK)], input=payload, text=True, env=hook_env
         )
 
     def decision(self, name, mode="default", token=None, prefix="mcp__plugin_leadmagic_leadmagic__"):
@@ -105,6 +105,18 @@ class ApprovalPolicyTest(unittest.TestCase):
     def test_ask_all_retains_normal_permissions(self):
         payload = json.dumps({"tool_name": "mcp__leadmagic__search_people"})
         self.assertEqual(self.output(payload, env={"LEADMAGIC_ASK_ALL": "1"}), "")
+
+    def test_direct_hook_retains_strict_options_despite_function_shadowing(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            startup = Path(tmp) / "startup.bash"
+            startup.write_text(
+                "shopt() { return 98; }\n"
+                "trap '[[ $- == *e* && $- == *u* ]] && "
+                "builtin shopt -q -o pipefail || exit 97' EXIT\n"
+            )
+            payload = json.dumps({"tool_name": "mcp__leadmagic__search_people"})
+            output = self.output(payload, env={"BASH_ENV": str(startup)})
+            self.assertEqual(json.loads(output)["hookSpecificOutput"]["permissionDecision"], "allow")
 
     def test_matcher_covers_both_tool_prefixes_only(self):
         config = json.loads((HOOK.parents[1] / "hooks" / "hooks.json").read_text())
