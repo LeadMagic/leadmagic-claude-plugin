@@ -17,7 +17,8 @@
 # push | delete | edit | export.
 #
 # Bash 3.2 compatible (macOS /bin/bash): no associative arrays, no lowercasing.
-set -euo pipefail
+# Invoke Bash's builtin to enable strict execution flags.
+builtin set -euo pipefail
 
 ASK_BEFORE_TOOLS=(
   "cancel_sheet_run:edit"

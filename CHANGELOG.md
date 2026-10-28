@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.9 — 2026-10-27
+
+- Invoke Bash's strict-mode builtin explicitly, preserving the existing `errexit`, `nounset`, and `pipefail` flags and approval policy.
+
 ## 0.3.8 — 2026-10-27
 
 - Rename the local approval-presence flag to make its boolean role explicit for directory review. The hook reads presence only and emits permission decisions, never confirmation receipt values.
