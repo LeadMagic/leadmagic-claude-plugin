@@ -13,7 +13,7 @@ HOOK = Path(__file__).resolve().parents[1] / "scripts" / "approval-policy.sh"
 
 class ApprovalPolicyTest(unittest.TestCase):
     def output(self, payload, *, env=None):
-        hook_env = dict(os.environ, LEADMAGIC_ASK_ALL="0")
+        hook_env = dict(os.environ, CLAUDE_PLUGIN_OPTION_ASK_ALL="false")
         if env:
             hook_env.update(env)
         return subprocess.check_output(
@@ -104,7 +104,10 @@ class ApprovalPolicyTest(unittest.TestCase):
 
     def test_ask_all_retains_normal_permissions(self):
         payload = json.dumps({"tool_name": "mcp__leadmagic__search_people"})
-        self.assertEqual(self.output(payload, env={"LEADMAGIC_ASK_ALL": "1"}), "")
+        self.assertEqual(self.output(payload, env={"CLAUDE_PLUGIN_OPTION_ASK_ALL": "true"}), "")
+        self.assertEqual(self.output(payload, env={"CLAUDE_PLUGIN_OPTION_ASK_ALL": "1"}), "")
+        # The retired environment variable no longer changes the decision.
+        self.assertNotEqual(self.output(payload, env={"LEADMAGIC_ASK_ALL": "1"}), "")
 
     def test_direct_hook_retains_strict_options_despite_function_shadowing(self):
         with tempfile.TemporaryDirectory() as tmp:

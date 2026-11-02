@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.3.13 — 2026-11-02
+
+- The approval-hook opt-out is now a plugin option, `ask_all`, which Claude Code passes to the hook as `CLAUDE_PLUGIN_OPTION_ASK_ALL`. It replaces the `LEADMAGIC_ASK_ALL` environment variable, so the plugin no longer reads values from the user's environment. The approval policy is otherwise unchanged.
+- Drop the `icon` field and `assets/icon.png`. The directory listing icon is set in the directory itself, and Claude Code ignores the field.
+
 ## 0.3.12 — 2026-11-02
 
 - Move the publisher and version consistency checks out of the public-file secret scanner into `scripts/check-publisher-metadata.py`. The secret scanner no longer reads plugin manifests, which the directory scan read as a credential forward. Both run in CI; the plugin's runtime behavior is unchanged.
