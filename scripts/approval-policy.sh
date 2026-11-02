@@ -51,9 +51,10 @@ ASK_BEFORE_TOOLS=(
 # Always drain stdin first, even when we decide to say nothing.
 input="$(cat || true)"
 
-# Escape hatch: the plugin's ask_all option (userConfig, exported by Claude Code as
-# CLAUDE_PLUGIN_OPTION_ASK_ALL) falls back to Claude Code's own permission rules.
-case "${CLAUDE_PLUGIN_OPTION_ASK_ALL:-}" in
+# Escape hatch: the plugin's ask_all option, passed by hooks/hooks.json as the
+# first argument, falls back to Claude Code's own permission rules. The hook reads
+# no environment values.
+case "${1:-}" in
   1|true) ask_all="true" ;;
   *) ask_all="false" ;;
 esac

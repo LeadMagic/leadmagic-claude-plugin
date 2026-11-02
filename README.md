@@ -124,7 +124,7 @@ Tools added by a newer server that match an acting prefix ask immediately until 
 
 **Your own rules win:** your `permissions.deny` and `permissions.ask` rules still take precedence over the hook.
 
-**Opt out:** turn on the plugin's **Ask for every LeadMagic tool** option (`ask_all`) in `/plugin` → LeadMagic → configure. That restores stock Claude Code prompting for every LeadMagic tool.
+**Opt out:** turn on the plugin's **Ask for every LeadMagic tool** option (`ask_all`) in `/plugin` → LeadMagic → configure; the hook receives it as an argument. That restores stock Claude Code prompting for every LeadMagic tool.
 
 **Connected LeadMagic without the plugin** (`claude mcp add …`)? Hooks only ship with the plugin. Paste the equivalent policy into `~/.claude/settings.json` instead. The snippet is in the LeadMagic app under Settings → API → AI tooling → Claude Code.
 

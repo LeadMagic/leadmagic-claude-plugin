@@ -11,13 +11,17 @@ import unittest
 HOOK = Path(__file__).resolve().parents[1] / "scripts" / "approval-policy.sh"
 
 
+# Fixed tool path for the hook; the tests pass no other environment values.
+TOOL_PATH = "/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin"
+
+
 class ApprovalPolicyTest(unittest.TestCase):
-    def output(self, payload, *, env=None):
-        hook_env = dict(os.environ, CLAUDE_PLUGIN_OPTION_ASK_ALL="false")
+    def output(self, payload, *, env=None, args=("false",)):
+        hook_env = {"PATH": TOOL_PATH}
         if env:
             hook_env.update(env)
         return subprocess.check_output(
-            [str(HOOK)], input=payload, text=True, env=hook_env
+            [str(HOOK), *args], input=payload, text=True, env=hook_env
         )
 
     def decision(self, name, mode="default", token=None, prefix="mcp__plugin_leadmagic_leadmagic__"):
@@ -104,10 +108,10 @@ class ApprovalPolicyTest(unittest.TestCase):
 
     def test_ask_all_retains_normal_permissions(self):
         payload = json.dumps({"tool_name": "mcp__leadmagic__search_people"})
-        self.assertEqual(self.output(payload, env={"CLAUDE_PLUGIN_OPTION_ASK_ALL": "true"}), "")
-        self.assertEqual(self.output(payload, env={"CLAUDE_PLUGIN_OPTION_ASK_ALL": "1"}), "")
-        # The retired environment variable no longer changes the decision.
-        self.assertNotEqual(self.output(payload, env={"LEADMAGIC_ASK_ALL": "1"}), "")
+        self.assertEqual(self.output(payload, args=("true",)), "")
+        self.assertEqual(self.output(payload, args=("1",)), "")
+        # No argument (a Claude Code build that ignores exec-form args) keeps the policy on.
+        self.assertNotEqual(self.output(payload, args=()), "")
 
     def test_direct_hook_retains_strict_options_despite_function_shadowing(self):
         with tempfile.TemporaryDirectory() as tmp:

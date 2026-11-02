@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.14 — 2026-11-02
+
+- The approval hook now runs in exec form and receives the `ask_all` option as an argument (`${user_config.ask_all}`) instead of reading `CLAUDE_PLUGIN_OPTION_ASK_ALL` from its environment. The hook reads no environment values. Builds that ignore exec-form `args` run the hook with the policy on.
+
 ## 0.3.13 — 2026-11-02
 
 - The approval-hook opt-out is now a plugin option, `ask_all`, which Claude Code passes to the hook as `CLAUDE_PLUGIN_OPTION_ASK_ALL`. It replaces the `LEADMAGIC_ASK_ALL` environment variable, so the plugin no longer reads values from the user's environment. The approval policy is otherwise unchanged.
