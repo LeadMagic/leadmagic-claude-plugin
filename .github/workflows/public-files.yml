@@ -13,3 +13,4 @@ jobs:
         with:
           persist-credentials: false
       - run: python3 scripts/check-public-files.py
+      - run: python3 scripts/check-publisher-metadata.py

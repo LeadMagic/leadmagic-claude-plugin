@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.12 — 2026-11-02
+
+- Move the publisher and version consistency checks out of the public-file secret scanner into `scripts/check-publisher-metadata.py`. The secret scanner no longer reads plugin manifests, which the directory scan read as a credential forward. Both run in CI; the plugin's runtime behavior is unchanged.
+
 ## 0.3.11 — 2026-10-27
 
 - Clarify the approval-hook opt-out wording in its comment and read-decision explanation; permission decisions and execution options are unchanged.
