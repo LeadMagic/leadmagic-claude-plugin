@@ -7,7 +7,7 @@
 # confirmation_token contract) and any name with a mutating prefix (see the
 # prefix case below). Emits no decision at all (Claude Code's normal permission
 # flow) when stdin cannot be parsed, the tool is not a LeadMagic tool, or
-# LEADMAGIC_ASK_ALL=1 is enabled.
+# the plugin's ask_all option is on.
 #
 # Contract: tests/test_approval_policy.py verifies this hook. Coordinate policy
 # updates between LeadMagic/leadmagic-claude-plugin and LeadMagic/leadmagic-skills.
@@ -51,8 +51,13 @@ ASK_BEFORE_TOOLS=(
 # Always drain stdin first, even when we decide to say nothing.
 input="$(cat || true)"
 
-# Escape hatch: fall back to Claude Code's own permission rules for every tool.
-if [[ "${LEADMAGIC_ASK_ALL:-}" == "1" ]]; then
+# Escape hatch: the plugin's ask_all option (userConfig, exported by Claude Code as
+# CLAUDE_PLUGIN_OPTION_ASK_ALL) falls back to Claude Code's own permission rules.
+case "${CLAUDE_PLUGIN_OPTION_ASK_ALL:-}" in
+  1|true) ask_all="true" ;;
+  *) ask_all="false" ;;
+esac
+if [[ "$ask_all" == "true" ]]; then
   exit 0
 fi
 
@@ -126,7 +131,7 @@ emit() {
 }
 
 if [[ -z "$group" ]]; then
-  emit allow "LeadMagic ${name}: read, preview, or single-record lookup, auto-approved by the LeadMagic plugin. Use LEADMAGIC_ASK_ALL=1 to prompt for every tool."
+  emit allow "LeadMagic ${name}: read, preview, or single-record lookup, auto-approved by the LeadMagic plugin. Turn on the plugin's ask_all option to prompt for every tool."
   exit 0
 fi
 
