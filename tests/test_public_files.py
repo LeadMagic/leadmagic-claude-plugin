@@ -20,19 +20,19 @@ class PublicFilesTest(unittest.TestCase):
             scanner = root / "scripts" / "check-public-files.py"
             scanner.parent.mkdir()
             scanner.write_text(source)
-            for name, content in files.items():
+            for name in files:
                 target = root / name
                 target.parent.mkdir(parents=True, exist_ok=True)
-                target.write_text(content)
+                # Keep synthetic credential fixtures in memory, never on disk.
+                target.touch()
 
             reads = []
-            original_read_bytes = Path.read_bytes
 
             def read_public_file(file_path):
                 name = str(file_path.relative_to(root))
                 self.assertNotIn(name, unreadable, "rejected credential file was opened")
                 reads.append(name)
-                return original_read_bytes(file_path)
+                return files[name].encode()
 
             output = io.StringIO()
             inventory = "\0".join(files).encode() + b"\0"
