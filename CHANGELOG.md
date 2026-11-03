@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.3.17 — 2026-11-02
+
+- Keep policy unit tests in memory and move process, installation-path, and interpreter-startup checks into the CI workflow. The unit harness no longer launches processes or constructs process environments; CI still verifies the actual manifest command using synthetic values and an empty tool path.
+- Keep the v0.3.16 input-only runtime, confirmation prompts, OAuth connector, skills, commands, agents, and repository source unchanged.
+
 ## 0.3.16 — 2026-11-02
 
 - Replace the shell approval hook with an isolated Python standard-library implementation that reads only its supplied input and explicit preference argument. Remove the Bash and `jq` runtime dependencies; the hook requires Python 3.9 or newer at `/usr/bin/python3`.
