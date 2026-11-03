@@ -47,6 +47,8 @@ Directory availability depends on approval of the listing. Use the GitHub instal
 
 The bundled connection uses OAuth; no REST API key is required. The optional approval hook requires Bash 3.2 or newer at `/bin/bash` and `jq`. If `jq` is unavailable, Claude Code uses its normal permission prompts; install `jq` to enable the hook.
 
+The hook runs with Bash's `-p` option to ignore inherited startup files, exported shell functions, and shell-option variables. This prevents local startup code from running before the approval policy; it does not grant elevated privileges. The hook receives the non-secret `ask_all` preference as an argument and makes no network calls.
+
 ## Skills
 
 | Skill | Purpose |

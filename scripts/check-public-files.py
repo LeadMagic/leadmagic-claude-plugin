@@ -25,6 +25,7 @@ for name in sorted(set(paths)):
         continue
     if path.name == ".env" or (path.name.startswith(".env.") and path.name not in (".env.example", ".env.sample", ".env.template")):
         issues.append(f"{name}: environment file must not be published")
+        continue
     data = path.read_bytes()
     if b"\0" in data:
         continue
