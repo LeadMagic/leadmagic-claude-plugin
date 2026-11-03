@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -p
 # PreToolUse approval policy for LeadMagic MCP tools (mcp__plugin_leadmagic_leadmagic__*
 # from this plugin, mcp__leadmagic__* when the server was added by hand).
 #
@@ -17,6 +17,8 @@
 # push | delete | edit | export.
 #
 # Bash 3.2 compatible (macOS /bin/bash): no associative arrays, no lowercasing.
+# Privileged mode (-p) ignores inherited startup files and exported functions;
+# it does not elevate privileges. Invoke the executable to retain this option.
 # Use the system Bash and name every execution option explicitly. The builtin
 # call preserves strict execution even if a shell function shadows shopt.
 builtin shopt -s -o errexit nounset pipefail

@@ -110,20 +110,38 @@ class ApprovalPolicyTest(unittest.TestCase):
         payload = json.dumps({"tool_name": "mcp__leadmagic__search_people"})
         self.assertEqual(self.output(payload, args=("true",)), "")
         self.assertEqual(self.output(payload, args=("1",)), "")
-        # No argument (a Claude Code build that ignores exec-form args) keeps the policy on.
+        # Direct execution without an argument keeps the policy on.
         self.assertNotEqual(self.output(payload, args=()), "")
 
-    def test_direct_hook_retains_strict_options_despite_function_shadowing(self):
+    def test_hook_ignores_inherited_startup_files_and_functions(self):
         with tempfile.TemporaryDirectory() as tmp:
             startup = Path(tmp) / "startup.bash"
-            startup.write_text(
-                "shopt() { return 98; }\n"
-                "trap '[[ $- == *e* && $- == *u* ]] && "
-                "builtin shopt -q -o pipefail || exit 97' EXIT\n"
-            )
+            marker = Path(tmp) / "startup-ran"
+            startup.write_text(f"printf ran > '{marker}'\nexit 97\n")
             payload = json.dumps({"tool_name": "mcp__leadmagic__search_people"})
-            output = self.output(payload, env={"BASH_ENV": str(startup)})
-            self.assertEqual(json.loads(output)["hookSpecificOutput"]["permissionDecision"], "allow")
+            hook_env = {
+                "PATH": TOOL_PATH,
+                "BASH_ENV": str(startup),
+                # Bash 3.2 and newer Bash export functions under different names.
+                "cat": "() { exit 98; }",
+                "BASH_FUNC_cat%%": "() { exit 98; }",
+                "SHELLOPTS": "xtrace",
+            }
+            config = json.loads((HOOK.parents[1] / "hooks" / "hooks.json").read_text())
+            command = config["hooks"]["PreToolUse"][0]["hooks"][0]
+            for ask_all in ("false", "true"):
+                invocation = [arg.replace("${CLAUDE_PLUGIN_ROOT}", str(HOOK.parents[1]))
+                              .replace("${user_config.ask_all}", ask_all)
+                              for arg in [command["command"], *command["args"]]]
+                with self.subTest(ask_all=ask_all):
+                    result = subprocess.run(invocation, input=payload, text=True,
+                                            env=hook_env, capture_output=True, check=True)
+                    if ask_all == "true":
+                        self.assertEqual(result.stdout, "")
+                    else:
+                        self.assertEqual(json.loads(result.stdout)["hookSpecificOutput"]["permissionDecision"], "allow")
+                    self.assertEqual(result.stderr, "")
+                    self.assertFalse(marker.exists())
 
     def test_matcher_covers_both_tool_prefixes_only(self):
         config = json.loads((HOOK.parents[1] / "hooks" / "hooks.json").read_text())

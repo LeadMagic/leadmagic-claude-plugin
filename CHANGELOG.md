@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.15 — 2026-11-02
+
+- Run the approval hook with `/bin/bash -p` through its executable entrypoint, preventing inherited startup files, exported functions, and shell-option variables from affecting it. Approval decisions, the exec-form `ask_all` argument, and OAuth MCP configuration are unchanged.
+- Reject prohibited `.env` files in the publication checker without reading their contents. Add regression coverage for both changes.
+- Preserve the directory listing URLs. Local validation cannot establish remote directory policy clearance; Anthropic review and publication remain separate steps.
+
 ## 0.3.14 — 2026-11-02
 
 - The approval hook now runs in exec form and receives the `ask_all` option as an argument (`${user_config.ask_all}`) instead of reading `CLAUDE_PLUGIN_OPTION_ASK_ALL` from its environment. The hook reads no environment values. Builds that ignore exec-form `args` run the hook with the policy on.
