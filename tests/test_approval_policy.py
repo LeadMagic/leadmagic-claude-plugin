@@ -1,6 +1,5 @@
 """Approval decisions for state-changing hosted MCP calls."""
 import json
-import os
 import re
 import shutil
 import tempfile
@@ -8,7 +7,16 @@ from pathlib import Path
 import subprocess
 import unittest
 
-HOOK = Path(__file__).resolve().parents[1] / "scripts" / "approval-policy.sh"
+ROOT = Path(__file__).resolve().parents[1]
+HOOK = ROOT / "scripts" / "approval-policy.py"
+
+
+def configured_command(ask_all="false", root=ROOT):
+    config = json.loads((ROOT / "hooks" / "hooks.json").read_text())
+    hook = config["hooks"]["PreToolUse"][0]["hooks"][0]
+    return [arg.replace("${CLAUDE_PLUGIN_ROOT}", str(root))
+            .replace("${user_config.ask_all}", ask_all)
+            for arg in [hook["command"], *hook["args"]]]
 
 
 # Fixed tool path for the hook; the tests pass no other environment values.
@@ -21,7 +29,7 @@ class ApprovalPolicyTest(unittest.TestCase):
         if env:
             hook_env.update(env)
         return subprocess.check_output(
-            [str(HOOK), *args], input=payload, text=True, env=hook_env
+            [*configured_command()[:-1], *args], input=payload, text=True, env=hook_env
         )
 
     def decision(self, name, mode="default", token=None, prefix="mcp__plugin_leadmagic_leadmagic__"):
@@ -34,7 +42,7 @@ class ApprovalPolicyTest(unittest.TestCase):
             "tool_input": tool_input,
         })
         output = self.output(payload)
-        return json.loads(output)["hookSpecificOutput"]["permissionDecision"]
+        return json.loads(output)["hookSpecificOutput"]["permissionDecision"] if output else None
 
     def test_immediate_sheet_mutations_ask_without_a_token(self):
         for prefix in ("mcp__plugin_leadmagic_leadmagic__", "mcp__leadmagic__"):
@@ -46,7 +54,7 @@ class ApprovalPolicyTest(unittest.TestCase):
     def test_preview_calls_and_approved_submits_are_distinct(self):
         for name in ("submit_detected_bulk_job", "delete_sheet_rows", "run_sheet_column"):
             with self.subTest(name=name):
-                self.assertEqual(self.decision(name), "allow")
+                self.assertEqual(self.decision(name), None)
                 self.assertEqual(self.decision(name, token="v1.1.sig"), "ask")
 
     def test_widgets_ask_before_opening(self):
@@ -54,11 +62,11 @@ class ApprovalPolicyTest(unittest.TestCase):
             with self.subTest(name=name):
                 self.assertEqual(self.decision(name), "ask")
 
-    def test_user_selected_automatic_modes_do_not_force_extra_prompts(self):
+    def test_user_selected_automatic_modes_use_host_permissions(self):
         for name in ("set_sheet_cells", "cancel_sheet_run", "process_attached_csv", "submit_detected_bulk_job"):
             for mode in ("auto", "dontAsk", "bypassPermissions"):
                 with self.subTest(name=name, mode=mode):
-                    self.assertEqual(self.decision(name, mode, token="v1.1.sig"), "allow")
+                    self.assertEqual(self.decision(name, mode, token="v1.1.sig"), None)
 
     def test_unknown_acting_tools_ask_without_assuming_a_preview(self):
         for prefix in ("mcp__plugin_leadmagic_leadmagic__", "mcp__leadmagic__"):
@@ -66,7 +74,7 @@ class ApprovalPolicyTest(unittest.TestCase):
                 with self.subTest(name=name, prefix=prefix):
                     self.assertEqual(self.decision(name, prefix=prefix), "ask")
                     self.assertEqual(self.decision(name, token="v1.1.sig", prefix=prefix), "ask")
-                    self.assertEqual(self.decision(name, mode="auto", prefix=prefix), "allow")
+                    self.assertEqual(self.decision(name, mode="auto", prefix=prefix), None)
 
     def test_nested_fields_do_not_change_top_level_permission_mode(self):
         payload = json.dumps({
@@ -84,7 +92,7 @@ class ApprovalPolicyTest(unittest.TestCase):
             "tool_name": "mcp__leadmagic__submit_detected_bulk_job",
             "tool_input": {"record": {"confirmation_token": "v1.1.sig"}},
         })
-        self.assertEqual(json.loads(self.output(payload))["hookSpecificOutput"]["permissionDecision"], "allow")
+        self.assertEqual(self.output(payload), "")
 
     def test_invalid_input_retains_normal_permissions(self):
         inputs = ("", "not json", "[]", '{"tool_name":"mcp__leadmagic__search_people"',
@@ -99,49 +107,67 @@ class ApprovalPolicyTest(unittest.TestCase):
         payload = json.dumps({"tool_name": "mcp__leadmagic__search_people"})
         self.assertEqual(self.output(payload + "\n" + payload), "")
 
-    def test_missing_jq_retains_normal_permissions(self):
+    def test_hook_needs_no_path_tools_or_jq(self):
         with tempfile.TemporaryDirectory() as tmp:
-            # The hook still drains stdin, but must not parse it heuristically.
-            os.symlink(shutil.which("cat"), Path(tmp) / "cat")
-            payload = json.dumps({"tool_name": "mcp__leadmagic__search_people"})
-            self.assertEqual(self.output(payload, env={"PATH": tmp}), "")
+            payload = json.dumps({"tool_name": "mcp__leadmagic__set_sheet_cells"})
+            output = self.output(payload, env={"PATH": tmp})
+            self.assertEqual(json.loads(output)["hookSpecificOutput"]["permissionDecision"], "ask")
 
     def test_ask_all_retains_normal_permissions(self):
         payload = json.dumps({"tool_name": "mcp__leadmagic__search_people"})
         self.assertEqual(self.output(payload, args=("true",)), "")
         self.assertEqual(self.output(payload, args=("1",)), "")
-        # Direct execution without an argument keeps the policy on.
-        self.assertNotEqual(self.output(payload, args=()), "")
+        # An absent opt-out argument keeps the policy on.
+        self.assertEqual(self.output(payload, args=()), "")
 
-    def test_hook_ignores_inherited_startup_files_and_functions(self):
+    def test_hook_ignores_interpreter_startup_and_import_overrides(self):
         with tempfile.TemporaryDirectory() as tmp:
-            startup = Path(tmp) / "startup.bash"
+            startup = Path(tmp) / "startup.py"
             marker = Path(tmp) / "startup-ran"
-            startup.write_text(f"printf ran > '{marker}'\nexit 97\n")
-            payload = json.dumps({"tool_name": "mcp__leadmagic__search_people"})
+            injected = f"open({str(marker)!r}, 'w').close()\nraise SystemExit(97)\n"
+            startup.write_text(injected)
+            for name in ("sitecustomize.py", "usercustomize.py", "json.py"):
+                (Path(tmp) / name).write_text(injected)
+            payload = json.dumps({"tool_name": "mcp__leadmagic__set_sheet_cells"})
             hook_env = {
                 "PATH": TOOL_PATH,
-                "BASH_ENV": str(startup),
-                # Bash 3.2 and newer Bash export functions under different names.
-                "cat": "() { exit 98; }",
-                "BASH_FUNC_cat%%": "() { exit 98; }",
-                "SHELLOPTS": "xtrace",
+                "PYTHONSTARTUP": str(startup),
+                "PYTHONPATH": tmp,
+                "PYTHONHOME": tmp,
+                "PYTHONUSERBASE": tmp,
             }
-            config = json.loads((HOOK.parents[1] / "hooks" / "hooks.json").read_text())
-            command = config["hooks"]["PreToolUse"][0]["hooks"][0]
             for ask_all in ("false", "true"):
-                invocation = [arg.replace("${CLAUDE_PLUGIN_ROOT}", str(HOOK.parents[1]))
-                              .replace("${user_config.ask_all}", ask_all)
-                              for arg in [command["command"], *command["args"]]]
                 with self.subTest(ask_all=ask_all):
-                    result = subprocess.run(invocation, input=payload, text=True,
-                                            env=hook_env, capture_output=True, check=True)
+                    result = subprocess.run(configured_command(ask_all), input=payload, text=True,
+                                            env=hook_env, cwd=tmp, capture_output=True, check=True)
                     if ask_all == "true":
                         self.assertEqual(result.stdout, "")
                     else:
-                        self.assertEqual(json.loads(result.stdout)["hookSpecificOutput"]["permissionDecision"], "allow")
+                        self.assertEqual(json.loads(result.stdout)["hookSpecificOutput"]["permissionDecision"], "ask")
                     self.assertEqual(result.stderr, "")
                     self.assertFalse(marker.exists())
+
+    def test_manifest_invocation_handles_install_paths_with_spaces(self):
+        with tempfile.TemporaryDirectory(prefix="LeadMagic plugin ") as tmp:
+            root = Path(tmp)
+            (root / "scripts").mkdir()
+            shutil.copyfile(HOOK, root / "scripts" / HOOK.name)
+            payload = json.dumps({"tool_name": "mcp__leadmagic__set_sheet_cells"})
+            output = subprocess.check_output(configured_command(root=root), input=payload, text=True)
+            self.assertEqual(json.loads(output)["hookSpecificOutput"]["permissionDecision"], "ask")
+
+    def test_input_values_cannot_inject_output_or_permission_modes(self):
+        payload = json.dumps({
+            "tool_name": "mcp__leadmagic__set_sheet_cells",
+            "permission_mode": "auto\tdefault\n\"injected\"",
+            "tool_input": {"confirmation_token": "private-receipt-value"},
+        })
+        output = self.output(payload)
+        self.assertEqual(json.loads(output)["hookSpecificOutput"]["permissionDecision"], "ask")
+        self.assertNotIn("private-receipt-value", output)
+
+    def test_large_invalid_nesting_retains_normal_permissions(self):
+        self.assertEqual(self.output("[" * 2000 + "]" * 2000), "")
 
     def test_matcher_covers_both_tool_prefixes_only(self):
         config = json.loads((HOOK.parents[1] / "hooks" / "hooks.json").read_text())
@@ -151,11 +177,11 @@ class ApprovalPolicyTest(unittest.TestCase):
         for name in ("mcp__other__search_people", "mcp__leadmagic__search_people-extra", "Bash"):
             self.assertIsNone(re.fullmatch(matcher, name))
 
-    def test_reads_previews_and_single_record_lookups_run_without_a_prompt(self):
+    def test_reads_previews_and_single_record_lookups_use_host_permissions(self):
         for name in READ_OR_LOOKUP_TOOLS:
             with self.subTest(name=name):
-                self.assertEqual(self.decision(name), "allow")
-                self.assertEqual(self.decision(name, token="v1.1.sig"), "allow")
+                self.assertEqual(self.decision(name), None)
+                self.assertEqual(self.decision(name, token="v1.1.sig"), None)
 
     def test_state_changing_tools_without_a_preview_contract_always_ask(self):
         for prefix in ("mcp__plugin_leadmagic_leadmagic__", "mcp__leadmagic__"):
@@ -165,7 +191,7 @@ class ApprovalPolicyTest(unittest.TestCase):
                         self.assertEqual(self.decision(name, mode=mode, prefix=prefix), "ask")
                         self.assertEqual(self.decision(name, mode=mode, token="v1.1.sig", prefix=prefix), "ask")
                     for mode in ("auto", "dontAsk", "bypassPermissions"):
-                        self.assertEqual(self.decision(name, mode=mode, prefix=prefix), "allow")
+                        self.assertEqual(self.decision(name, mode=mode, prefix=prefix), None)
 
 
 READ_OR_LOOKUP_TOOLS = (

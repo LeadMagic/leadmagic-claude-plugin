@@ -45,9 +45,9 @@ Directory availability depends on approval of the listing. Use the GitHub instal
 2. Complete OAuth sign-in in the browser.
 3. Try: *Check my LeadMagic credit balance.*
 
-The bundled connection uses OAuth; no REST API key is required. The optional approval hook requires Bash 3.2 or newer at `/bin/bash` and `jq`. If `jq` is unavailable, Claude Code uses its normal permission prompts; install `jq` to enable the hook.
+The bundled connection uses OAuth; no REST API key is required. The optional approval hook requires Python 3.9 or newer at `/usr/bin/python3` (available with the macOS command-line developer tools and on many Linux systems). If that interpreter is unavailable, the hook cannot run and Claude Code's own permission rules continue to apply.
 
-The hook runs with Bash's `-p` option to ignore inherited startup files, exported shell functions, and shell-option variables. This prevents local startup code from running before the approval policy; it does not grant elevated privileges. The hook receives the non-secret `ask_all` preference as an argument and makes no network calls.
+The hook runs in Python's isolated mode with site initialization disabled (`-I -S`). It reads only the tool input supplied by Claude Code and the non-secret `ask_all` argument. It does not read environment credentials or local configuration, launch processes, or make network calls.
 
 ## Skills
 
@@ -88,11 +88,11 @@ The hook runs with Bash's `-p` option to ignore inherited startup files, exporte
 
 ## Credit safety and approval prompts
 
-Claude Code normally asks before every MCP tool call. Left alone, a long LeadMagic task would stall on a prompt at every step. So the plugin ships a `PreToolUse` hook (`scripts/approval-policy.sh`) that answers some of those prompts for you.
+Claude Code's own permission rules control every MCP tool call. The plugin's `PreToolUse` hook (`scripts/approval-policy.py`) adds confirmation prompts for guarded actions. It never grants a tool permission automatically.
 
-**What the hook auto-approves (no prompt):**
+**What uses Claude Code's normal permission rules:**
 
-- **Reads, previews, and single-record tools**: lookups, searches, validation, composites like `account_intel`, and sheet reads.
+- **Reads, previews, and single-record tools**: lookups, searches, validation, composites like `account_intel`, and sheet reads. The hook emits no permission decision for these calls.
 - Some of these spend a credit or two per call. The `credit-guard` skill has the model call the free `preview_cost` before anything larger.
 
 **What still asks, with a reason naming the tool and what to check:**
@@ -112,12 +112,12 @@ The hook also guards tools from older server versions that are unavailable on th
 
 - The guarded bulk jobs, paid sheet runs, imports and deletes act in two steps on the server. The first call only returns a preview and a `confirmation_token`. Every paid sheet run needs approval, including small samples and AI runs using your saved provider key; only runs the server verifies are free can start immediately.
 - Nothing runs until a second call carries that token.
-- The hook lets the preview through and asks you once, on the call that would act.
+- The hook leaves the preview to Claude Code's normal permission rules and adds a confirmation prompt on the call that would act.
 - The upload-widget openers, `set_sheet_cells`, and `cancel_sheet_run` ask before the first call in the default permission modes.
 
 **Permission modes:**
 
-- If your session already skips approval prompts (`permission_mode` of `bypassPermissions`, `auto`, or `dontAsk`), the hook allows those tools instead of returning `ask`. A hook `ask` would otherwise force a prompt even in auto mode.
+- If your session already skips approval prompts (`permission_mode` of `bypassPermissions`, `auto`, or `dontAsk`), the hook emits no decision and leaves the session's permission rules in control. A hook `ask` would otherwise force a prompt even in auto mode.
 - `default`, `acceptEdits`, and `plan` modes still ask.
 
 Tools added by a newer server that match an acting prefix ask immediately until the plugin knows their preview contract.
@@ -126,9 +126,9 @@ Tools added by a newer server that match an acting prefix ask immediately until 
 
 **Your own rules win:** your `permissions.deny` and `permissions.ask` rules still take precedence over the hook.
 
-**Opt out:** turn on the plugin's **Ask for every LeadMagic tool** option (`ask_all`) in `/plugin` → LeadMagic → configure; the hook receives it as an argument. That restores stock Claude Code prompting for every LeadMagic tool.
+**Opt out of extra prompts:** turn on **Use Claude Code permission rules only** (`ask_all`) in `/plugin` → LeadMagic → configure. The hook receives this non-secret preference as an argument and emits no decisions. Claude Code's own rules continue to apply.
 
-**Connected LeadMagic without the plugin** (`claude mcp add …`)? Hooks only ship with the plugin. Paste the equivalent policy into `~/.claude/settings.json` instead. The snippet is in the LeadMagic app under Settings → API → AI tooling → Claude Code.
+**Connected LeadMagic without the plugin** (`claude mcp add …`)? Set your desired MCP permissions in Claude Code. This plugin's extra confirmation prompts apply only when the plugin is installed.
 
 ## Validate
 

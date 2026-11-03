@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.16 — 2026-11-02
+
+- Replace the shell approval hook with an isolated Python standard-library implementation that reads only its supplied input and explicit preference argument. Remove the Bash and `jq` runtime dependencies; the hook requires Python 3.9 or newer at `/usr/bin/python3`.
+- Remove automatic permission grants to address the directory's `HOOK_GRANTS_PERMISSION` finding. Reads, previews, and automatic session modes use Claude Code's own permission rules; guarded actions still request confirmation in normal modes.
+- Preserve all 10 bundled skills, 12 commands, two agents, OAuth connection, and directory listing metadata. Verify the directory source and installation references point to `LeadMagic/leadmagic-claude-plugin` on `main`.
+
 ## 0.3.15 — 2026-11-02
 
 - Run the approval hook with `/bin/bash -p` through its executable entrypoint, preventing inherited startup files, exported functions, and shell-option variables from affecting it. Approval decisions, the exec-form `ask_all` argument, and OAuth MCP configuration are unchanged.

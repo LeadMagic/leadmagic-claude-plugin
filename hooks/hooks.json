@@ -6,8 +6,8 @@
 				"hooks": [
 					{
 						"type": "command",
-						"command": "${CLAUDE_PLUGIN_ROOT}/scripts/approval-policy.sh",
-						"args": ["${user_config.ask_all}"],
+						"command": "/usr/bin/python3",
+						"args": ["-I", "-S", "${CLAUDE_PLUGIN_ROOT}/scripts/approval-policy.py", "${user_config.ask_all}"],
 						"timeout": 5
 					}
 				]
