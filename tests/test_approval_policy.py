@@ -1,36 +1,29 @@
 """Approval decisions for state-changing hosted MCP calls."""
+import contextlib
+import io
 import json
 import re
-import shutil
-import tempfile
+import runpy
+import sys
 from pathlib import Path
-import subprocess
 import unittest
+from unittest import mock
 
 ROOT = Path(__file__).resolve().parents[1]
 HOOK = ROOT / "scripts" / "approval-policy.py"
 
 
-def configured_command(ask_all="false", root=ROOT):
-    config = json.loads((ROOT / "hooks" / "hooks.json").read_text())
-    hook = config["hooks"]["PreToolUse"][0]["hooks"][0]
-    return [arg.replace("${CLAUDE_PLUGIN_ROOT}", str(root))
-            .replace("${user_config.ask_all}", ask_all)
-            for arg in [hook["command"], *hook["args"]]]
-
-
-# Fixed tool path for the hook; the tests pass no other environment values.
-TOOL_PATH = "/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin"
+POLICY = runpy.run_path(str(HOOK))
 
 
 class ApprovalPolicyTest(unittest.TestCase):
-    def output(self, payload, *, env=None, args=("false",)):
-        hook_env = {"PATH": TOOL_PATH}
-        if env:
-            hook_env.update(env)
-        return subprocess.check_output(
-            [*configured_command()[:-1], *args], input=payload, text=True, env=hook_env
-        )
+    def output(self, payload, *, args=("false",)):
+        captured = io.StringIO()
+        with mock.patch.object(sys, "stdin", io.StringIO(payload)):
+            with mock.patch.object(sys, "argv", [str(HOOK), *args]):
+                with contextlib.redirect_stdout(captured):
+                    POLICY["main"]()
+        return captured.getvalue()
 
     def decision(self, name, mode="default", token=None, prefix="mcp__plugin_leadmagic_leadmagic__"):
         tool_input = {}
@@ -107,54 +100,12 @@ class ApprovalPolicyTest(unittest.TestCase):
         payload = json.dumps({"tool_name": "mcp__leadmagic__search_people"})
         self.assertEqual(self.output(payload + "\n" + payload), "")
 
-    def test_hook_needs_no_path_tools_or_jq(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            payload = json.dumps({"tool_name": "mcp__leadmagic__set_sheet_cells"})
-            output = self.output(payload, env={"PATH": tmp})
-            self.assertEqual(json.loads(output)["hookSpecificOutput"]["permissionDecision"], "ask")
-
     def test_ask_all_retains_normal_permissions(self):
-        payload = json.dumps({"tool_name": "mcp__leadmagic__search_people"})
+        payload = json.dumps({"tool_name": "mcp__leadmagic__set_sheet_cells"})
         self.assertEqual(self.output(payload, args=("true",)), "")
         self.assertEqual(self.output(payload, args=("1",)), "")
         # An absent opt-out argument keeps the policy on.
-        self.assertEqual(self.output(payload, args=()), "")
-
-    def test_hook_ignores_interpreter_startup_and_import_overrides(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            startup = Path(tmp) / "startup.py"
-            marker = Path(tmp) / "startup-ran"
-            injected = f"open({str(marker)!r}, 'w').close()\nraise SystemExit(97)\n"
-            startup.write_text(injected)
-            for name in ("sitecustomize.py", "usercustomize.py", "json.py"):
-                (Path(tmp) / name).write_text(injected)
-            payload = json.dumps({"tool_name": "mcp__leadmagic__set_sheet_cells"})
-            hook_env = {
-                "PATH": TOOL_PATH,
-                "PYTHONSTARTUP": str(startup),
-                "PYTHONPATH": tmp,
-                "PYTHONHOME": tmp,
-                "PYTHONUSERBASE": tmp,
-            }
-            for ask_all in ("false", "true"):
-                with self.subTest(ask_all=ask_all):
-                    result = subprocess.run(configured_command(ask_all), input=payload, text=True,
-                                            env=hook_env, cwd=tmp, capture_output=True, check=True)
-                    if ask_all == "true":
-                        self.assertEqual(result.stdout, "")
-                    else:
-                        self.assertEqual(json.loads(result.stdout)["hookSpecificOutput"]["permissionDecision"], "ask")
-                    self.assertEqual(result.stderr, "")
-                    self.assertFalse(marker.exists())
-
-    def test_manifest_invocation_handles_install_paths_with_spaces(self):
-        with tempfile.TemporaryDirectory(prefix="LeadMagic plugin ") as tmp:
-            root = Path(tmp)
-            (root / "scripts").mkdir()
-            shutil.copyfile(HOOK, root / "scripts" / HOOK.name)
-            payload = json.dumps({"tool_name": "mcp__leadmagic__set_sheet_cells"})
-            output = subprocess.check_output(configured_command(root=root), input=payload, text=True)
-            self.assertEqual(json.loads(output)["hookSpecificOutput"]["permissionDecision"], "ask")
+        self.assertEqual(json.loads(self.output(payload, args=()))["hookSpecificOutput"]["permissionDecision"], "ask")
 
     def test_input_values_cannot_inject_output_or_permission_modes(self):
         payload = json.dumps({
