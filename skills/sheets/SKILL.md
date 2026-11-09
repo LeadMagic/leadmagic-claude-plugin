@@ -38,7 +38,7 @@ Always in this order. Use column **keys** (`col_…`) from `get_sheet`, never di
 
    On a big fill, first add `sample_size: 3` and follow the approval step below before running the sample. Show the user the sampled values (`read_sheet_rows` on those rows), then request a new quote and approval for the full run without `sample_size`.
 7. **Confirm when the server asks.**
-   - Every paid run, including a small sample or an AI run using the user's saved provider key, first returns `needs_confirmation`, a summary, and a `confirmation_token`. Nothing has run yet. Only runs the server verifies are free can start immediately.
+   - Every paid run, including a small sample or an AI column, first returns `needs_confirmation`, a summary, and a `confirmation_token`. Nothing has run yet. Only runs the server verifies are free can start immediately.
    - Show the exact sheet, columns, row scope, and maximum credits from the quote. Only after the user explicitly approves that quote, send the **identical** arguments plus the token.
    - A token, available credits, or approval for another scope is not consent. Never invent a token or reuse one for a changed scope. If the scope changes or the quote expires, obtain a new quote and approval.
 8. **Follow `next_step`.** When a run returns `next_step` plus `next_arguments`, that is the next paid stage of the pipeline. Show its summary, and on approval send `next_arguments` with its token. Don't make separate quote or status calls in between.
@@ -56,7 +56,7 @@ Always in this order. Use column **keys** (`col_…`) from `get_sheet`, never di
 | --- | --- | --- | --- |
 | `manual` | typed by the user or `set_sheet_cells` | free | `add_sheet_column(s)` |
 | `enrichment` | a LeadMagic product + `input_mapping` {product input → column key} | the product's per-row credits; misses are usually free | `add_sheet_columns` / `configure_sheet_column` |
-| `ai` | a per-row `prompt` naming columns as `{Column Name}` | LeadMagic AI by default, charged in credits by usage; or the user's own provider key saved in the app | `add_sheet_columns` / `configure_sheet_column` |
+| `ai` | a per-row `prompt` naming columns as `{Column Name}` | LeadMagic AI, charged in credits by usage (AI billing is configured in the LeadMagic app) | `add_sheet_columns` / `configure_sheet_column` |
 | `formula` | an expression, e.g. `{First Name} & " " & {Last Name}` | free | `configure_sheet_column` |
 | `json` | one field of another column's response (`source_column_key` + `path`) | free | `extract_sheet_json_field` |
 
@@ -151,7 +151,7 @@ Both deletes ask for confirmation first.
 4. **Ask only when the server asks.** Use the `needs_confirmation` + `confirmation_token` flow above.
 5. **402 / `insufficient_credits`:** send the user to [billing](https://app.leadmagic.io/settings/billing) or [auto top-up](https://app.leadmagic.io/settings/auto-top-up). Then re-run with `row_state: "insufficientCredits"`. On a 401, reconnect OAuth.
 
-Report only values the sheet returned. Empty or no-result cells stay empty: never fill them from memory. Never put API keys, AI keys, or personal data into prompts, recipes, or chat.
+Report only values the sheet returned. Empty or no-result cells stay empty: never fill them from memory. Never put secrets or personal data into prompts, recipes, or chat.
 
 ## Sheets vs bulk jobs
 
