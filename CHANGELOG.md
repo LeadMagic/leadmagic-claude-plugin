@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.3.19 — 2026-11-09
+
+- Ship only file types the Claude plugin directory accepts from unverified publishers: remove `scripts/*.py` and `tests/*.py`, and replace `assets/logo.svg` with `assets/logo.png`.
+- Move the credential, publisher-metadata, and new allowed-file-type checks inline into the `Public file safety` workflow.
+
 ## 0.3.18 — 2026-11-09
 
 - Remove the `PreToolUse` approval hook (`hooks/hooks.json`, `scripts/approval-policy.py`) and its `ask_all` option. The Claude plugin directory accepts no hooks from unverified organizations. Paid and destructive actions remain gated by the hosted server's preview and `confirmation_token`, the `credit-guard` skill, and Claude Code's own permission rules.

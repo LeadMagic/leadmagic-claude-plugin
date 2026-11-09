@@ -71,15 +71,6 @@ jobs:
           print("ok     all plugin.json component paths exist")
           PY
 
-      - name: Check public files
-        run: python3 -B scripts/check-public-files.py
-
-      - name: Check publisher metadata
-        run: python3 -B scripts/check-publisher-metadata.py
-
-      - name: Publication regression tests
-        run: python3 -B -m unittest discover -s tests -v
-
       - name: Ensure the plugin ships no hooks
         run: |
           set -euo pipefail
