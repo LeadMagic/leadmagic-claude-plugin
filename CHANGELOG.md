@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.3.18 — 2026-11-09
+
+- Remove the `PreToolUse` approval hook (`hooks/hooks.json`, `scripts/approval-policy.py`) and its `ask_all` option. The Claude plugin directory accepts no hooks from unverified organizations. Paid and destructive actions remain gated by the hosted server's preview and `confirmation_token`, the `credit-guard` skill, and Claude Code's own permission rules.
+- CI now fails if the plugin ships hooks.
+
 ## 0.3.17 — 2026-11-02
 
 - Keep policy unit tests in memory and move process, installation-path, and interpreter-startup checks into the CI workflow. The unit harness no longer launches processes or constructs process environments; CI still verifies the actual manifest command using synthetic values and an empty tool path.

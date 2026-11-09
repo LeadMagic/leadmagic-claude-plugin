@@ -1,7 +1,7 @@
 {
 	"name": "leadmagic",
 	"displayName": "LeadMagic",
-	"version": "0.3.17",
+	"version": "0.3.18",
 	"description": "Official LeadMagic GTM plugin for Claude Code. Connects to hosted MCP for B2B account research, work email discovery and validation, decision-maker search, hiring intent, LeadMagic Sheets, bulk enrichment, and credit-aware workflows.",
 	"author": {
 		"name": "LeadMagic Corporation",
@@ -27,14 +27,6 @@
 		"hiring-intent",
 		"bulk-enrichment"
 	],
-	"userConfig": {
-		"ask_all": {
-			"type": "boolean",
-			"title": "Use Claude Code permission rules only",
-			"description": "Disable extra confirmation prompts from the plugin. Claude Code's own permission rules continue to apply to every tool.",
-			"default": false
-		}
-	},
 	"skills": "./skills/",
 	"agents": [
 		"./agents/leadmagic-gtm.md",

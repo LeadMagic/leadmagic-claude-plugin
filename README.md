@@ -2,7 +2,7 @@
 
 <img src="https://raw.githubusercontent.com/LeadMagic/leadmagic-claude-plugin/main/assets/logo.svg" width="64" height="64" alt="LeadMagic logo">
 
-Official LeadMagic plugin for [Claude Code](https://code.claude.com): skills, agents, an approval-policy hook, and the hosted MCP connector (available tools depend on your workspace; Sheets tools appear when your workspace has Sheets) at `https://mcp.leadmagic.io/mcp`.
+Official LeadMagic plugin for [Claude Code](https://code.claude.com): skills, agents, commands, and the hosted MCP connector (available tools depend on your workspace; Sheets tools appear when your workspace has Sheets) at `https://mcp.leadmagic.io/mcp`.
 
 Published by LeadMagic Corporation.
 
@@ -15,7 +15,7 @@ Published by LeadMagic Corporation.
 ## What this plugin connects to
 
 - **One network endpoint.** The plugin's only server is `https://mcp.leadmagic.io/mcp`, over HTTP with OAuth sign-in in your browser. No API key goes into any config file.
-- **Nothing sent elsewhere.** The plugin's skills, agents, commands, and hook send nothing to any other host. The hook is a local shell script that makes no network calls.
+- **Nothing sent elsewhere.** The plugin's skills, agents, and commands send nothing to any other host. The plugin ships no hooks.
 - **Custom HTTP sheet columns are configured in the LeadMagic app, not through this plugin.** If you set one up there, LeadMagic's servers call the host you chose, with that row's values.
 
 Prefer raw REST with an API key? That lives in a separate project: [LeadMagic/leadmagic-skills](https://github.com/LeadMagic/leadmagic-skills). Finder tools return already-validated work emails. Use `validate_work_email` only for addresses that came from somewhere else. Costs depend on the tool and your plan — see the [credit rules](https://leadmagic.io/docs/v1/credits?utm_source=github&utm_medium=readme&utm_campaign=leadmagic-claude-plugin&utm_content=readme-connects-to), and call the free `preview_cost` before paid work.
@@ -45,9 +45,7 @@ Directory availability depends on approval of the listing. Use the GitHub instal
 2. Complete OAuth sign-in in the browser.
 3. Try: *Check my LeadMagic credit balance.*
 
-The bundled connection uses OAuth; no REST API key is required. The optional approval hook requires Python 3.9 or newer at `/usr/bin/python3` (available with the macOS command-line developer tools and on many Linux systems). If that interpreter is unavailable, the hook cannot run and Claude Code's own permission rules continue to apply.
-
-The hook runs in Python's isolated mode with site initialization disabled (`-I -S`). It reads only the tool input supplied by Claude Code and the non-secret `ask_all` argument. It does not read environment credentials or local configuration, launch processes, or make network calls.
+The bundled connection uses OAuth; no REST API key is required.
 
 ## Skills
 
@@ -88,47 +86,13 @@ The hook runs in Python's isolated mode with site initialization disabled (`-I -
 
 ## Credit safety and approval prompts
 
-Claude Code's own permission rules control every MCP tool call. The plugin's `PreToolUse` hook (`scripts/approval-policy.py`) adds confirmation prompts for guarded actions. It never grants a tool permission automatically.
+Claude Code's own permission rules control every MCP tool call. The plugin ships no hooks; set the MCP permissions you want in Claude Code (`permissions.allow`, `permissions.ask`, `permissions.deny`).
 
-**What uses Claude Code's normal permission rules:**
+**Server-side two-step approval:** bulk jobs, paid sheet runs, CRM/sequencer imports, outbound pushes, and deletes act in two steps on the hosted server. The first call returns only a preview with the scope, the maximum credits, and a `confirmation_token`. Nothing runs until a second call carries that token. Every paid sheet run needs approval, including small samples and AI runs using your saved provider key; only runs the server verifies are free can start immediately.
 
-- **Reads, previews, and single-record tools**: lookups, searches, validation, composites like `account_intel`, and sheet reads. The hook emits no permission decision for these calls.
-- Some of these spend a credit or two per call. The `credit-guard` skill has the model call the free `preview_cost` before anything larger.
+The `credit-guard` skill and both agents tell Claude to show you that quote and wait for your explicit approval before resending with the token, and to call the free `preview_cost` before any large single-record call.
 
-**What still asks, with a reason naming the tool and what to check:**
-
-| Group | Tools |
-| --- | --- |
-| Bulk jobs | `submit_detected_bulk_job`, `create_bulk_upload_session`, `process_attached_csv`, `restart_bulk_job`, `find_local_leads` |
-| Paid runs | `run_sheet_column`, `resume_bulk_job`, `set_sheet_column_auto_run` |
-| Imports | `import_sheet_recipe`, `import_cloud_crm`, `import_cloud_sequencer` |
-| Workspace changes | Cell edits; adding, updating, configuring, restoring, reordering, and extracting sheet columns or rows; saved lists; automation toggles; pauses and cancellations |
-| Exports | `export_bulk_job`, `export_prospect_list`, `export_sheet_recipe` |
-| Deletes | `delete_sheet_rows`, `delete_sheet_column` |
-
-The hook also guards tools from older server versions that are unavailable on the current hosted connector, so existing installs keep their approval protection during deployment.
-
-**How the two-step approval works:**
-
-- The guarded bulk jobs, paid sheet runs, imports and deletes act in two steps on the server. The first call only returns a preview and a `confirmation_token`. Every paid sheet run needs approval, including small samples and AI runs using your saved provider key; only runs the server verifies are free can start immediately.
-- Nothing runs until a second call carries that token.
-- The hook leaves the preview to Claude Code's normal permission rules and adds a confirmation prompt on the call that would act.
-- The upload-widget openers, `set_sheet_cells`, and `cancel_sheet_run` ask before the first call in the default permission modes.
-
-**Permission modes:**
-
-- If your session already skips approval prompts (`permission_mode` of `bypassPermissions`, `auto`, or `dontAsk`), the hook emits no decision and leaves the session's permission rules in control. A hook `ask` would otherwise force a prompt even in auto mode.
-- `default`, `acceptEdits`, and `plan` modes still ask.
-
-Tools added by a newer server that match an acting prefix ask immediately until the plugin knows their preview contract.
-
-**Workspace changes:** tools without a known preview contract ask on every call, including pauses, cancellations, automation toggles, and exports. This also protects newly added tools with a mutating prefix.
-
-**Your own rules win:** your `permissions.deny` and `permissions.ask` rules still take precedence over the hook.
-
-**Opt out of extra prompts:** turn on **Use Claude Code permission rules only** (`ask_all`) in `/plugin` → LeadMagic → configure. The hook receives this non-secret preference as an argument and emits no decisions. Claude Code's own rules continue to apply.
-
-**Connected LeadMagic without the plugin** (`claude mcp add …`)? Set your desired MCP permissions in Claude Code. This plugin's extra confirmation prompts apply only when the plugin is installed.
+To be prompted on every acting call as well, add an `ask` rule, for example `"mcp__plugin_leadmagic_leadmagic__run_sheet_column"`, or `"mcp__plugin_leadmagic_leadmagic"` for every LeadMagic tool.
 
 ## Validate
 
