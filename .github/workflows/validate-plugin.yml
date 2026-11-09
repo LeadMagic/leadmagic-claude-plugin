@@ -36,7 +36,7 @@ jobs:
         run: |
           set -euo pipefail
           status=0
-          for f in .claude-plugin/plugin.json .claude-plugin/marketplace.json .mcp.json hooks/hooks.json; do
+          for f in .claude-plugin/plugin.json .claude-plugin/marketplace.json .mcp.json; do
             if jq -e . "$f" >/dev/null; then
               echo "ok    $f"
             else
@@ -60,7 +60,7 @@ jobs:
               elif isinstance(value, list):
                   for item in value:
                       check(item)
-          for key in ("skills", "agents", "hooks", "mcpServers", "commands"):
+          for key in ("skills", "agents", "mcpServers", "commands"):
               if key in manifest:
                   check(manifest[key])
           for skill_md in sorted(os.path.join(r, "SKILL.md") for r, _, files in os.walk("skills") if "SKILL.md" in files):
@@ -77,55 +77,17 @@ jobs:
       - name: Check publisher metadata
         run: python3 -B scripts/check-publisher-metadata.py
 
-      - name: Approval policy and publication regression tests
+      - name: Publication regression tests
         run: python3 -B -m unittest discover -s tests -v
 
-      - name: Verify hook isolation in a synthetic host environment
+      - name: Ensure the plugin ships no hooks
         run: |
-          python3 - <<'PY'
-          import json
-          from pathlib import Path
-          import shutil
-          import subprocess
-          import tempfile
-
-          root = Path.cwd()
-          config = json.loads((root / "hooks/hooks.json").read_text())
-          hook = config["hooks"]["PreToolUse"][0]["hooks"][0]
-          with tempfile.TemporaryDirectory() as tmp:
-              marker = Path(tmp) / "startup-ran"
-              injected = f"open({str(marker)!r}, 'w').close()\nraise SystemExit(97)\n"
-              startup = Path(tmp) / "startup.py"
-              startup.write_text(injected)
-              for name in ("sitecustomize.py", "usercustomize.py", "json.py"):
-                  (Path(tmp) / name).write_text(injected)
-              # Synthetic values only; never inspect or copy the runner's credentials.
-              child_settings = {
-                  "PATH": tmp,
-                  "PYTHONSTARTUP": str(startup),
-                  "PYTHONPATH": tmp,
-                  "PYTHONHOME": tmp,
-                  "PYTHONUSERBASE": tmp,
-              }
-              payload = json.dumps({"tool_name": "mcp__leadmagic__set_sheet_cells"})
-              install = Path(tmp) / "LeadMagic plugin with spaces"
-              (install / "scripts").mkdir(parents=True)
-              shutil.copyfile(root / "scripts/approval-policy.py", install / "scripts/approval-policy.py")
-              for plugin_root in (root, install):
-                  for ask_all in ("false", "true"):
-                      command = [part.replace("${CLAUDE_PLUGIN_ROOT}", str(plugin_root))
-                                 .replace("${user_config.ask_all}", ask_all)
-                                 for part in [hook["command"], *hook["args"]]]
-                      result = subprocess.run(command, input=payload, text=True,
-                                              env=child_settings, cwd=tmp, capture_output=True, check=True)
-                      assert result.stderr == "", result.stderr
-                      assert not marker.exists(), "interpreter startup override executed"
-                      if ask_all == "true":
-                          assert result.stdout == "", result.stdout
-                      else:
-                          assert json.loads(result.stdout)["hookSpecificOutput"]["permissionDecision"] == "ask"
-          print("Hook ignores startup overrides, needs no PATH tools, and supports install paths with spaces.")
-          PY
+          set -euo pipefail
+          if [ -e hooks ] || jq -e 'has("hooks")' .claude-plugin/plugin.json >/dev/null; then
+            echo "The Claude plugin directory refuses hooks from unverified organizations. Remove them."
+            exit 1
+          fi
+          echo "ok    no hooks"
 
       - name: Parse skill, command, and agent frontmatter as strict YAML
         run: |
