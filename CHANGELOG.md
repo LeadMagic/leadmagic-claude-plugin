@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.20 — 2026-11-09
+
+- Clear directory-policy holds: remove `assets/logo.png` (the listing icon is set in the directory) and the CI step that scanned files for credentials. GitHub secret scanning and push protection cover credential leaks.
+
 ## 0.3.19 — 2026-11-09
 
 - Ship only file types the Claude plugin directory accepts from unverified publishers: remove `scripts/*.py` and `tests/*.py`, and replace `assets/logo.svg` with `assets/logo.png`.
