@@ -12,11 +12,11 @@ Published by LeadMagic Corporation.
 
 ## What this plugin connects to
 
-- **One network endpoint.** The plugin's only server is `https://mcp.leadmagic.io/mcp`, over HTTP with OAuth sign-in in your browser. No API key goes into any config file.
+- **One network endpoint.** The plugin's only server is `https://mcp.leadmagic.io/mcp`, over HTTP with OAuth sign-in in your browser. The plugin stores no keys.
 - **Nothing sent elsewhere.** The plugin's skills, agents, and commands send nothing to any other host. The plugin ships no hooks.
 - **Custom HTTP sheet columns are configured in the LeadMagic app, not through this plugin.** If you set one up there, LeadMagic's servers call the host you chose, with that row's values.
 
-Prefer raw REST with an API key? That lives in a separate project: [LeadMagic/leadmagic-skills](https://github.com/LeadMagic/leadmagic-skills). Finder tools return already-validated work emails. Use `validate_work_email` only for addresses that came from somewhere else. Costs depend on the tool and your plan — see the [credit rules](https://leadmagic.io/docs/v1/credits?utm_source=github&utm_medium=readme&utm_campaign=leadmagic-claude-plugin&utm_content=readme-connects-to), and call the free `preview_cost` before paid work.
+Prefer the REST API? That lives in a separate project: [LeadMagic/leadmagic-skills](https://github.com/LeadMagic/leadmagic-skills). Finder tools return already-validated work emails. Use `validate_work_email` only for addresses that came from somewhere else. Costs depend on the tool and your plan — see the [credit rules](https://leadmagic.io/docs/v1/credits?utm_source=github&utm_medium=readme&utm_campaign=leadmagic-claude-plugin&utm_content=readme-connects-to), and call the free `preview_cost` before paid work.
 
 ## Install
 
@@ -43,7 +43,7 @@ Directory availability depends on approval of the listing. Use the GitHub instal
 2. Complete OAuth sign-in in the browser.
 3. Try: *Check my LeadMagic credit balance.*
 
-The bundled connection uses OAuth; no REST API key is required.
+The bundled connection uses OAuth sign-in.
 
 ## Skills
 
@@ -86,7 +86,7 @@ The bundled connection uses OAuth; no REST API key is required.
 
 Claude Code's own permission rules control every MCP tool call. The plugin ships no hooks; set the MCP permissions you want in Claude Code (`permissions.allow`, `permissions.ask`, `permissions.deny`).
 
-**Server-side two-step approval:** bulk jobs, paid sheet runs, CRM/sequencer imports, outbound pushes, and deletes act in two steps on the hosted server. The first call returns only a preview with the scope, the maximum credits, and a `confirmation_token`. Nothing runs until a second call carries that token. Every paid sheet run needs approval, including small samples and AI runs using your saved provider key; only runs the server verifies are free can start immediately.
+**Server-side two-step approval:** bulk jobs, paid sheet runs, CRM/sequencer imports, outbound pushes, and deletes act in two steps on the hosted server. The first call returns only a preview with the scope, the maximum credits, and a `confirmation_token`. Nothing runs until a second call carries that token. Every paid sheet run needs approval, including small samples and AI columns; only runs the server verifies are free can start immediately.
 
 The `credit-guard` skill and both agents tell Claude to show you that quote and wait for your explicit approval before resending with the token, and to call the free `preview_cost` before any large single-record call.
 
