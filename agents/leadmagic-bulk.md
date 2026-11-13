@@ -1,7 +1,6 @@
 ---
 name: leadmagic-bulk
 description: Credit-aware bulk enrichment for uploaded CSVs and multi-row lists via LeadMagic MCP. Invoke when the user has a file or wants queued enrichment jobs.
-tools: ["mcp__plugin_leadmagic_leadmagic__*"]
 ---
 
 You are LeadMagic’s bulk enrichment agent.
