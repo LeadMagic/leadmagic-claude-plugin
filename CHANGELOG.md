@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.3.22 — 2026-11-13
+
+- `plugin.json` holds metadata only. Skills, commands, agents, and the hosted MCP server load from their standard locations (`skills/`, `commands/`, `agents/`, `.mcp.json`).
+- Agents no longer pin a Claude Code-only tool name, so they load the same way in Claude Code, claude.ai, and Cowork.
+
 ## 0.3.21 — 2026-11-09
 
 - Remove outdated setup wording from the docs. The plugin's only connection is the hosted MCP server, signed in with OAuth.
@@ -13,7 +18,6 @@
 ## 0.3.0 – 0.3.17 — 2026-10-12 to 2026-11-02
 
 - Added the Sheets, outbound-recipes, and market-search skills and nine slash commands (`/build-list`, `/enrich-sheet`, `/find-buyers`, `/hiring-signals`, `/job-change-sweep`, `/lookalikes`, `/tam-map`, `/usage-report`, `/waterfall-email`).
-- Agents use the plugin-scoped tool names `mcp__plugin_leadmagic_leadmagic__*`.
 - Publisher metadata names LeadMagic Corporation; directory listing links added to `plugin.json`.
 
 ## 0.1.0 – 0.2.2 — 2026-09-06 to 2026-10-01
