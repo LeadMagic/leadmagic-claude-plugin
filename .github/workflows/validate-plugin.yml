@@ -46,6 +46,10 @@ jobs:
           done
           exit "$status"
 
+      - name: Verify the hosted MCP configuration
+        run: |
+          jq -e '. == {mcpServers: {leadmagic: {type: "http", url: "https://mcp.leadmagic.io/mcp"}}}' .mcp.json
+
       - name: Check plugin.json component paths exist
         run: |
           set -euo pipefail

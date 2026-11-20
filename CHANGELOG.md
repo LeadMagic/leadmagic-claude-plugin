@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.3.23 — 2026-11-20
+
+- Clarify installation from the Claude directory and GitHub, and use the current privacy and support links.
+- Validate the bundled LeadMagic connection against the hosted OAuth endpoint in CI.
+
 ## 0.3.22 — 2026-11-13
 
 - `plugin.json` holds metadata only. Skills, commands, agents, and the hosted MCP server load from their standard locations (`skills/`, `commands/`, `agents/`, `.mcp.json`).
