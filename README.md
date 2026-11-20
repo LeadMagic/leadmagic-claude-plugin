@@ -35,7 +35,7 @@ claude --plugin-dir /path/to/leadmagic-claude-plugin
 
 The GitHub marketplace install uses the remote source revision held by Claude Code's marketplace cache; it does not mirror a local checkout. A local checkout may contain newer, uncommitted, or branch-only changes. To test the exact files in a checkout, use `claude --plugin-dir /path/to/leadmagic-claude-plugin` instead.
 
-Directory availability depends on approval of the listing. Use the GitHub installation above until LeadMagic appears in the [Claude directory](https://claude.ai/directory).
+You can also install the approved LeadMagic release from the [Claude directory](https://claude.ai/directory). Directory updates become available after Anthropic review. The GitHub marketplace distributes the version from this repository.
 
 ## Connect
 
@@ -103,8 +103,8 @@ claude plugin validate --strict .
 
 - Hosted MCP / Connectors Directory: `https://mcp.leadmagic.io/mcp` for every client (the bare origin still works for existing installs)
 - Docs: [leadmagic.io/docs/mcp/introduction](https://leadmagic.io/docs/mcp/introduction?utm_source=github&utm_medium=readme&utm_campaign=leadmagic-claude-plugin&utm_content=readme-related)
-- Privacy: [leadmagic.io/privacy](https://leadmagic.io/privacy?utm_source=github&utm_medium=readme&utm_campaign=leadmagic-claude-plugin&utm_content=readme-related)
-- Support: [leadmagic.io/docs/support](https://leadmagic.io/docs/support?utm_source=github&utm_medium=readme&utm_campaign=leadmagic-claude-plugin&utm_content=readme-related)
+- Privacy: [leadmagic.io/legal/privacy](https://leadmagic.io/legal/privacy?utm_source=github&utm_medium=readme&utm_campaign=leadmagic-claude-plugin&utm_content=readme-related)
+- Support: [leadmagic.io/docs/v1/support](https://leadmagic.io/docs/v1/support?utm_source=github&utm_medium=readme&utm_campaign=leadmagic-claude-plugin&utm_content=readme-related)
 
 ## License
 
